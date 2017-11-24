@@ -164,19 +164,23 @@ def confirm_message(event):
     elif text == 'チュートリアル':
         line_bot_api.reply_message(
             event.reply_token,[
-            TextSendMessage(text="服の登録を始めます"),
-            TextSendMessage(text="「登録」と入力してください!")
+            TextSendMessage(text="Topsの登録を行います"),
+            TextSendMessage(text="「登録」と入力し、「Tops」をタップしてください")
         ])
     elif text == '登録':
         confirm_template = ConfirmTemplate(text='登録する服の種類は？', actions=[
             MessageTemplateAction(label='Tops', text='Tops'),
-            MessageTemplateAction(label='Botoms', text='Botoms'),
+            MessageTemplateAction(label='Bottoms', text='Bottoms'),
         ])
         template_message = TemplateSendMessage(
             alt_text='Confirm alt text', template=confirm_template)
+#        line_bot_api.reply_message(
+#            event.reply_token,
+#            template_message
+#        )
         line_bot_api.reply_message(
             event.reply_token,
-            template_message
+            TextSendMessage(text=template_message+'画像を送ったください')
         )
     elif text == 'い':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextMessage(text='message1'))
