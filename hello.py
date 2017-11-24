@@ -166,8 +166,11 @@ def confirm_message(event):
         test_text = event.source.user_id
         #test_text = "event.source.userId"
         line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=test_text)
+            event.reply_token,[
+            TextSendMessage(text=test_text),
+            TextSendMessage(text='oo')
+            ]
+
         )
 
 
