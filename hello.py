@@ -112,7 +112,6 @@ def handle_location(event):
 #pushメッセージ
 @handler.add(MessageEvent)
 def push_message():
-
     line_bot_api.reply_message('<to>',TextMessage(text='message1'))
 
 
@@ -148,7 +147,7 @@ def confirm_message(event):
     else:
         # 送られてきたテキストを返す
         print(event.message)
-        test_text = event.replyToken.userId
+        test_text = source.userId
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=test_text)
