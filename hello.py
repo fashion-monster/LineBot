@@ -86,7 +86,7 @@ def image_message(event):
                 fd.write(chunk)
         line_bot_api.reply_message(
             event.reply_token,
-            ImageSendMessage(original_content_url=f_path, preview_image_url=f_path)
+            ImageSendMessage(original_content_url='fashion-monster-pbl.herokuapp.com'+f_path, preview_image_url="fashion-monster-pbl.herokuapp.com"+f_path)
         )
     except:
         import traceback
