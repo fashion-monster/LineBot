@@ -83,14 +83,10 @@ def image_message(event):
     with open(file_path, 'wb') as fd:
         for chunk in message_content.iter_content():
             fd.write(chunk)
-    try:
-        line_bot_api.reply_message(
-            event.reply_token,
-            ImageSendMessage(original_content_url=file_path, preview_image_url=file_path)
-        )
-    except:
-        import traceback
-        traceback.print_exc()
+    line_bot_api.reply_message(
+        event.reply_token,
+        ImageSendMessage(original_content_url=file_path, preview_image_url=file_path)
+    )
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
@@ -157,11 +153,7 @@ def confirm_message(event):
     else:
         # 送られてきたテキストを返す
         print(event.message)
-<<<<<<< HEAD
         test_text = source.userId
-=======
-        test_text = "kokokok"
->>>>>>> 8f099b2997343fb343ec1dfee3647c3d90c8c649
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=test_text)
