@@ -80,6 +80,9 @@ def image_message(event):
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     file_path = './img/'+msg_id+'.jpg'
+    with open(file_path, 'wb') as fd:
+    for chunk in message_content.iter_content():
+        fd.write(chunk)
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
