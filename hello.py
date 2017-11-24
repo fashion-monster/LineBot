@@ -80,6 +80,7 @@ def image_message(event):
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     file_path = './'+msg_id+'.jpg'
+<<<<<<< HEAD
     try:
         with open(file_path, 'wb') as fd:
             for chunk in message_content.iter_content():
@@ -91,6 +92,15 @@ def image_message(event):
     except:
         import traceback
         traceback.print_exc()
+=======
+    with open(file_path, 'wb') as fd:
+        for chunk in message_content.iter_content():
+            fd.write(chunk)
+    line_bot_api.reply_message(
+        event.reply_token,
+        ImageSendMessage(original_content_url=file_path, preview_image_url=file_path)
+    )
+>>>>>>> 73b45881c46b692254af475e52e54ba310a09909
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
@@ -157,7 +167,7 @@ def confirm_message(event):
     else:
         # 送られてきたテキストを返す
         print(event.message)
-        test_text = "kokokok"
+        test_text = source.userId
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=test_text)
