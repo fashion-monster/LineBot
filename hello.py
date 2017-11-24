@@ -81,7 +81,7 @@ def image_message(event):
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = 'https://fashion-monster-pbl.herokuapp.com/app/'+msg_id+'.jpg'
     try:
-        with open(f_path, 'w') as fd:
+        with open(f_path, 'w+') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
         line_bot_api.reply_message(
