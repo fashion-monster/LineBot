@@ -87,7 +87,11 @@ def image_message(event):
         
         line_bot_api.reply_message(
             event.reply_token,
+<<<<<<< HEAD
             ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work'+f_path, preview_image_url='https://fashion.zoozoo-monster-pbl.work'+f_path)
+=======
+            ImageSendMessage(original_content_url='fashion-monster-pbl.herokuapp.com'+f_path, preview_image_url="fashion-monster-pbl.herokuapp.com"+f_path)
+>>>>>>> 27c5c6af7fd85d9a79aa20df7800803a4d4093bf
         )
     except:
         import traceback
@@ -157,7 +161,7 @@ def confirm_message(event):
     else:
         # 送られてきたテキストを返す
         print(event.message)
-        test_text = event.source.userId
+        test_text = event.source.user_id
         #test_text = "event.source.userId"
         line_bot_api.reply_message(
             event.reply_token,
