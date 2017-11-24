@@ -1,7 +1,7 @@
 import json
 
 
-class location():
+class Location:
     def __init__(self, lat, lng):
         self.lat = lat
         self.lng = lng
@@ -9,7 +9,7 @@ class location():
     def load_from_json(self):
         return "NotImplemented!Sorry!"
 
-    def perse_to_json_parts(self):
+    def parse_to_json_parts(self):
         location = \
             {
                 "lat": self.lat,
@@ -18,7 +18,7 @@ class location():
         return location
 
 
-class clothes():
+class Clothes:
     """
     @param top1: color
     @param top2: color
@@ -35,7 +35,7 @@ class clothes():
     def load_from_json(self):
         return "NotImplemented!Sorry!"
 
-    def perse_to_json_parts(self):
+    def parse_to_json_parts(self):
         clothes = \
             {
                 "tops": {
@@ -48,23 +48,23 @@ class clothes():
         return clothes
 
 
-class handler():
+class Handler:
     def __init__(self, username, location, clothes):
         """
         Before you call this method, you need to make `location` object and
-        `clothes` object and to do `perse_to_json_parts()` in each instance.
+        `clothes` object and to do `parse_to_json_parts()` in each instance.
         """
         self.username = username
         self.location = location
         self.clothes = clothes
 
-        print "Before you call this method,you need to make `location` object and `clothes` object."
-        print "args:username, location, clothes"
+        print("Before you call this method,you need to make `location` object and `clothes` object.")
+        print("args:username, location, clothes")
 
     def load_from_json(self):
         pass
 
-    def perse_to_json(self):
+    def parse_to_json(self):
         user_data = \
             {
                 "username": self.username,
