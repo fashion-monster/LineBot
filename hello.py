@@ -62,7 +62,7 @@ def handle_follow(event):
     line_bot_api.reply_message(
         event.reply_token,[
         TextSendMessage(text="登録友達追加ありがとうございます"),
-        TextSendMessage(text="「チュートリアル」と入力してください")
+        TextSendMessage(text="「チュートリアル」と入力してください!")
     ]
     )
 
