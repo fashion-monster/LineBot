@@ -79,14 +79,14 @@ def handle_follow(event):
 def image_message(event):
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
-    file_path = 'https://fashion-monster-pbl.herokuapp.com/app/'+msg_id+'.jpg'
+    f_path = 'https://fashion-monster-pbl.herokuapp.com/'+msg_id+'.jpg'
     try:
-        with open(file_path, 'wb') as fd:
+        with open(f_path, 'w') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
         line_bot_api.reply_message(
             event.reply_token,
-            ImageSendMessage(original_content_url=file_path, preview_image_url=file_path)
+            ImageSendMessage(original_content_url=f_path, preview_image_url=f_path)
         )
     except:
         import traceback
