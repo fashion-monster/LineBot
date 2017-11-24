@@ -84,7 +84,7 @@ def image_message(event):
         with open(f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
-        
+
         line_bot_api.reply_message(
             event.reply_token,
             ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work'+f_path, preview_image_url='https://fashion.zoozoo-monster-pbl.work'+f_path)
@@ -120,9 +120,10 @@ def handle_location(event):
 #                TextSendMessage(text="保存")
 #            )
 
+#puthメッセージ
 @handler.add(MessageEvent)
 def push_message():
-    line_bot_api.reply_message('<to>',TextMessage(text='message1'))
+    line_bot_api.reply_message('U68c9b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
 
 
 @handler.add(MessageEvent, message=TextMessage)
