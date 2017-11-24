@@ -156,7 +156,8 @@ def confirm_message(event):
     else:
         # 送られてきたテキストを返す
         print(event.message)
-        test_text = event.source.userId
+        #test_text = event.source.userId
+        test_text = "event.source.userId"
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=test_text)
