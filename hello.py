@@ -60,8 +60,10 @@ def callback():
 @handler.add(FollowEvent)
 def handle_follow(event):
     line_bot_api.reply_message(
-        event.reply_token,
+        event.reply_token,[
         TextSendMessage(text="登録友達追加ありがとうございます"),
+        TextSendMessage(text="「チュートリアル」と入力してください")
+    ]
     )
 
 
@@ -170,7 +172,6 @@ def confirm_message(event):
                 TextSendMessage(text=test_text),
                 TextSendMessage(text='oo')
             ]
-
         )
 
 
