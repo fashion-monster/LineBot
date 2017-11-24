@@ -79,7 +79,7 @@ def handle_follow(event):
 def image_message(event):
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
-    file_path = './'+msg_id+'.jpg'
+    file_path = 'https://fashion-monster-pbl.herokuapp.com/app/'+msg_id+'.jpg'
     try:
         with open(file_path, 'wb') as fd:
             for chunk in message_content.iter_content():
