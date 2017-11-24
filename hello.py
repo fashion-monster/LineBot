@@ -1,20 +1,18 @@
 # coding=utf-8
-from flask import Flask, request, abort
+import os
 
+from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
-    InvalidSignatureError, LineBotApiError
+    InvalidSignatureError
 )
 from linebot.models import (
-    FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage,ImageSendMessage,
-    LocationMessage, ConfirmTemplate, MessageTemplateAction, TemplateSendMessage,
-    ButtonsTemplate, URITemplateAction, PostbackTemplateAction,
+    ImageSendMessage,
     FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage, ConfirmTemplate,
     MessageTemplateAction, TemplateSendMessage, ButtonsTemplate, URITemplateAction, PostbackTemplateAction
 )
-import os
 
 app = Flask(__name__)
 file_path = "./image"
@@ -66,9 +64,10 @@ def handle_follow(event):
         TextSendMessage(text="登録友達追加ありがとうございます"),
     )
 
-#画像IDを返す
-#@handler.add(MessageEvent, message=ImageMessage)
-#def handle_image(event):
+
+# 画像IDを返す
+# @handler.add(MessageEvent, message=ImageMessage)
+# def handle_image(event):
 #    line_bot_api.reply_message(
 #        event.reply_token,
 #        TextSendMessage(text=event.message.id)
@@ -79,7 +78,7 @@ def handle_follow(event):
 def image_message(event):
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
-    f_path = '/tmp/'+msg_id+'.jpg'
+    f_path = '/tmp/' + msg_id + '.jpg'
     try:
         with open(f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
@@ -87,12 +86,12 @@ def image_message(event):
 
         line_bot_api.reply_message(
             event.reply_token,
-            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work'+f_path, preview_image_url='https://fashion.zoozoo-monster-pbl.work'+f_path)
+            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
         )
     except:
         import traceback
         traceback.print_exc()
-
 
 
 @handler.add(MessageEvent, message=LocationMessage)
@@ -123,10 +122,10 @@ def handle_location(event):
 #                TextSendMessage(text="保存")
 #            )
 
-#puthメッセージ
+# puthメッセージ
 @handler.add(MessageEvent, message=TextMessage)
 def push_message():
-    line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
+    line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextMessage(text='message1'))
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -162,7 +161,7 @@ def confirm_message(event):
         # 送られてきたテキストを返す
         print(event.message)
         test_text = event.source.user_id
-        #test_text = "event.source.userId"
+        # test_text = "event.source.userId"
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=test_text)

@@ -12,10 +12,11 @@ class location():
     def perse_to_json_parts(self):
         location = \
             {
-                "lat":self.lat,
-                "lng":self.lng
+                "lat": self.lat,
+                "lng": self.lng
             }
         return location
+
 
 class clothes():
     """
@@ -24,6 +25,7 @@ class clothes():
     @param top3: color
     @param bottom: color
     """
+
     def __init__(self, top1, top2, top3, bottom):
         self.top1 = top1
         self.top2 = top2
@@ -36,14 +38,15 @@ class clothes():
     def perse_to_json_parts(self):
         clothes = \
             {
-                "tops":{
-                    "top1":self.top1,
-                    "top2":self.top2,
-                    "top3":self.top3
+                "tops": {
+                    "top1": self.top1,
+                    "top2": self.top2,
+                    "top3": self.top3
                 },
-                "bottom":self.bottom
+                "bottom": self.bottom
             }
         return clothes
+
 
 class handler():
     def __init__(self, username, location, clothes):
@@ -64,55 +67,51 @@ class handler():
     def perse_to_json(self):
         user_data = \
             {
-                "username":self.username,
-                "location":self.location,
-                "clothes":self.clothes
+                "username": self.username,
+                "location": self.location,
+                "clothes": self.clothes
             }
         return json.dumps(user_data)
 
-dummy_users = {}
-dummy_users['key1'] = \
-    {
-        "username":"hashimoto",
-        "location":{
-            "lat":35.0,
-            "lng":135.9
+
+dummy_users = {'key1': {
+    "username": "hashimoto",
+    "location": {
+        "lat": 35.0,
+        "lng": 135.9
+    },
+    "clothes": {
+        "tops": {
+            "top1": "image_url1",
+            "top2": "image_url2",
+            "top3": "image_url3"
         },
-        "clothes":{
-            "tops":{
-                "top1":"image_url1",
-                "top2":"image_url2",
-                "top3":"image_url3"
-            },
-            "bottom":{
-                "bottom":"bottom_url"
-            }
+        "bottom": {
+            "bottom": "bottom_url"
         }
     }
-
-dummy_users['key2'] = \
-    {
-        "username":"shirata",
-        "location":{
-            "lat":35.0,
-            "lng":135.0
+}, 'key2': {
+    "username": "shirata",
+    "location": {
+        "lat": 35.0,
+        "lng": 135.0
+    },
+    "clothes": {
+        "tops": {
+            "top1": "image_url1",
+            "top2": "image_url2",
+            "top3": "image_url3"
         },
-        "clothes":{
-            "tops":{
-                "top1":"image_url1",
-                "top2":"image_url2",
-                "top3":"image_url3"
-            },
-            "bottom":{
-                "bottom":"bottom_url"
-            }
+        "bottom": {
+            "bottom": "bottom_url"
         }
     }
+}}
 
 #
-#dummy = json.dumps(dummy_users)
+# dummy = json.dumps(dummy_users)
 #
-#print dummy
+# print dummy
 #
-#load_json = json.loads(dummy)
-#print load_json['key1']
+# load_json = json.loads(dummy)
+# print load_json['key1']
