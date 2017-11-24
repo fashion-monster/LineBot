@@ -83,10 +83,14 @@ def image_message(event):
     with open(file_path, 'wb') as fd:
         for chunk in message_content.iter_content():
             fd.write(chunk)
-    line_bot_api.reply_message(
-        event.reply_token,
-        ImageSendMessage(original_content_url=file_path, preview_image_url=file_path)
-    )
+    try:
+        line_bot_api.reply_message(
+            event.reply_token,
+            ImageSendMessage(original_content_url=file_path, preview_image_url=file_path)
+        )
+    except:
+        import traceback
+        traceback.print_exc()
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
