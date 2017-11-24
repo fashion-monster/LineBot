@@ -123,7 +123,7 @@ def handle_location(event):
 #puthメッセージ
 @handler.add(MessageEvent)
 def push_message():
-    line_bot_api.reply_message('U68c9b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
+    line_bot_api.reply_message('U68c89b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
 
 
 @handler.add(MessageEvent, message=TextMessage)
