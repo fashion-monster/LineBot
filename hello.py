@@ -9,6 +9,7 @@ from linebot.exceptions import (
 )
 from linebot.models import (
     FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage,
+    ImageSendMessage,
     LocationMessage, ConfirmTemplate, MessageTemplateAction, TemplateSendMessage,
     ButtonsTemplate, URITemplateAction, PostbackTemplateAction,
     FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage, ConfirmTemplate,
