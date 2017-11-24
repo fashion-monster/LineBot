@@ -84,9 +84,10 @@ def image_message(event):
         with open(f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
+        
         line_bot_api.reply_message(
             event.reply_token,
-            ImageSendMessage(original_content_url='https://fashion-monster-pbl.herokuapp.com'+f_path, preview_image_url='https://fashion-monster-pbl.herokuapp.com'+f_path)
+            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work'+f_path, preview_image_url='https://fashion.zoozoo-monster-pbl.work'+f_path)
         )
     except:
         import traceback
