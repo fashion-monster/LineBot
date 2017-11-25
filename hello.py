@@ -80,6 +80,7 @@ def handle_follow(event):
 
 @handler.add(MessageEvent, message=ImageMessage)
 def image_message(event):
+    """repeat gotten image"""
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
@@ -87,7 +88,7 @@ def image_message(event):
         with open(f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
-
+        requests.put(url='127.0.0.1:9999/resize', data="{'image_name':'"+f_path+"'}")
         line_bot_api.reply_message(
             event.reply_token,
             ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
@@ -102,11 +103,7 @@ def image_message(event):
 def handle_location(event):
     lat = str(event.message.latitude)
     lng = str(event.message.longitude)
-    print(lat)
-    print(lng)
     msg = ('your location is ' + lat + ',' + lng)
-    print(lat)
-    print(lng)
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -209,4 +206,4 @@ def confirm_message(event):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
