@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import requests
 
 from flask import Flask, request, abort
 from linebot import (
@@ -60,11 +61,11 @@ def callback():
 @handler.add(FollowEvent)
 def handle_follow(event):
     line_bot_api.reply_message(
-        event.reply_token,[
-        TextSendMessage(text="登録友達追加ありがとうございます"),
-        TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
-        TextSendMessage(text="初めに「チュートリアル」と入力してください!")
-    ]
+        event.reply_token, [
+            TextSendMessage(text="登録友達追加ありがとうございます"),
+            TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
+            TextSendMessage(text="初めに「チュートリアル」と入力してください!")
+        ]
     )
 
 
@@ -126,7 +127,7 @@ def handle_location(event):
 #            )
 
 
-# puthメッセージ
+# pushメッセージ
 # @handler.add(MessageEvent)
 # def push_message():
 #    line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
@@ -163,11 +164,11 @@ def confirm_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
     elif text == 'チュートリアル':
         line_bot_api.reply_message(
-            event.reply_token,[
-            TextSendMessage(text="Topsの登録を行います"),
-            TextSendMessage(text="「登録」と入力し、「Tops」をタップしてから画像の送信をしてください"),
-            TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
-        ])
+            event.reply_token, [
+                TextSendMessage(text="Topsの登録を行います"),
+                TextSendMessage(text="「登録」と入力し、「Tops」をタップしてから画像の送信をしてください"),
+                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
+            ])
     elif text == '登録':
         confirm_template = ConfirmTemplate(text='登録する服の種類は？', actions=[
             MessageTemplateAction(label='Tops', text='Tops'),
