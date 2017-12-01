@@ -171,7 +171,7 @@ def confirm_message(event):
             event.reply_token, [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
-                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
+                TextSendMessage(text="画像登録が成功すればチュートリアル終了です!")
             ])
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
