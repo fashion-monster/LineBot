@@ -141,20 +141,17 @@ def handle_location(event):
 #                TextSendMessage(text="保存")
 #            )
 
-
-# pushメッセージ
-# @handler.add(MessageEvent)
-# def push_message():
-#    with open('follower.csv', 'r') as f:
-#        reader = csv.reader(f) # readerオブジェクトを作成
-#        header = next(reader)  # 最初の一行をヘッダーとして取得
-#        for row in reader:
-#        line_bot_api.push_message('reader',[
-#                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
-#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path),
-#                   ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
-#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
-#           ])
+@app.route('/push_message', methods=['POST'])
+def push_message():
+   with open('follower.csv', 'r') as f:
+       reader = csv.reader(f) # readerオブジェクトを作成
+       header = next(reader)  # 最初の一行をヘッダーとして取得
+       for row in reader:
+           line_bot_api.push_message('reader',[
+                TextSendMessage(text="Topsの登録を行います"),
+                TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
+                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
+            ])
 
 
 @handler.add(MessageEvent, message=TextMessage)
