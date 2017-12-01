@@ -73,6 +73,17 @@ def handle_follow(event):
     ]
     )
 
+@handler.add(UnfollowEvent)
+def handle_unfollow(event):
+    userid = event.source.user_id
+    with open('follower.csv', 'r') as f:
+        reader = csv.reader(f) # readerオブジェクトを作成
+        reader.remove(userid)
+    with open('follower.csv', 'a') as f:
+        writer = csv.writer(f, lineterminator='\n')
+        for row in reader:
+            writer.writerow([reader])
+
 
 # 画像IDを返す
 # @handler.add(MessageEvent, message=ImageMessage)
