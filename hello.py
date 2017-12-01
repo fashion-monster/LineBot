@@ -97,8 +97,7 @@ def image_message(event):
                 TextSendMessage(text="IDは"),
                 TextSendMessage(text=msg_id),
                 TextSendMessage(text="Topsの場合は[ID:Tops]"),
-                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]"),
-                TextSendMessage(text="と入力してください")
+                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]と入力してください")
             ]
         )
     except:
