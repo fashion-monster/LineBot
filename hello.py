@@ -90,7 +90,7 @@ def image_message(event):
             for chunk in message_content.iter_content():
                 fd.write(chunk)
         print(f_path)
-            header = {'content-type':'application/json'}
+        header = {'content-type':'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data="{'image_path':'"+f_path+"'}"))
         line_bot_api.reply_message(
             event.reply_token,[
