@@ -63,7 +63,7 @@ def handle_follow(event):
     userid = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow(str(userid))
+        writer.writerow([str(userid)])
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -157,12 +157,15 @@ def push_message():
     with open('follower.csv', 'r') as f:
         reader = csv.reader(f)  # readerオブジェクトを作成
         header = next(reader)  # 最初の一行をヘッダーとして取得
+        print('header!!!!!!!',header)
         for row in reader:
-            line_bot_api.push_message('reader', [
+            line_bot_api.push_message(str(header[0]), [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
+
+    return "OK!"
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -194,16 +197,16 @@ def confirm_message(event):
         template_message = TemplateSendMessage(
             alt_text='Buttons alt text', template=buttons_template)
         line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'チュートリアル':
+    elif text == u'チュートリアル':
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
-    elif text == 'テスト':
-        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
-    elif text == '確認':
+    elif text == u'テスト':
+        line_bot_api.push_message(u'U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
+    elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
             event.reply_token,
