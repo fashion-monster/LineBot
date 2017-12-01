@@ -206,7 +206,7 @@ def confirm_message(event):
         type_list = [event.source.user_id,types[0]+'.jpg',types[1]]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow([typs_list])
+            writer.writerow([type_list])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Topsの登録完了です！!')
@@ -216,7 +216,7 @@ def confirm_message(event):
         type_list = [event.source.user_id,types[0]+'.jpg',types[1]]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow([typs_list])
+            writer.writerow([type_list])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Bottomsの登録完了です！')
