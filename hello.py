@@ -88,15 +88,9 @@ def image_message(event):
         with open('.' + f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
-<<<<<<< HEAD
-        print(f_path)
-        header = {'content-type': 'application/json'}
-        print(requests.post(url='http://127.0.0.1:9999/resize', headers=header, data="{'image_path':'" + f_path + "'}"))
-=======
                 print(f_path)
                 header = {'content-type':'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data="{'image_path':'"+f_path+"'}"))
->>>>>>> d85f3547fb9f200325911bdc9f6498f80be9772f
         line_bot_api.reply_message(
             event.reply_token,[
                 TextSendMessage(text='Topsの場合は'),
