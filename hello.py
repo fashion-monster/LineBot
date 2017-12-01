@@ -64,7 +64,7 @@ def handle_follow(event):
     userid = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow(str(userid))
+        writer.writerow([str(userid)])
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -194,16 +194,16 @@ def confirm_message(event):
         template_message = TemplateSendMessage(
             alt_text='Buttons alt text', template=buttons_template)
         line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'チュートリアル':
+    elif text == u'チュートリアル':
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
-    elif text == 'テスト':
+    elif text == u'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
-    elif text == '確認':
+    elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
             event.reply_token,
