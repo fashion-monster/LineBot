@@ -38,4 +38,4 @@ def pickMostUsedColor(src_img_path):
 	first_index = sorted_histgram[0]
 	second_index = sorted_histgram[1]
 	third_index = sorted_histgram[2]
-	return [COLOR_CHART[first_index], COLOR_CHART[second_index], COLOR_CHART[third_index]]
+	return { "first_color":COLOR_CHART[first_index], "second_color": COLOR_CHART[second_index], "third_color": COLOR_CHART[third_index] }
