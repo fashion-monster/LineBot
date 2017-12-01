@@ -1,20 +1,8 @@
 # coding=utf-8
 import json
-import requests
 import urllib
-import time
-from datetime import datetime
-import math
 
 API_KEY = "390c6d3fbf9fdb070974872249d0e7fc"
-
-
-def datetime_to_epoch(d):
-    return int(time.mktime(d.timetuple()))
-
-
-def calc_disconfort_index(H, T):
-    return 0.81 * T + 0.01 * H * (0.99 * T - 14.3) + 46.3
 
 
 class Weather(object):
@@ -32,14 +20,6 @@ class Weather(object):
         response = urllib.urlopen(url)
         res = response.read()
         j = json.loads(res)
-        print(j)
-
-        now = datetime.now()
-        print(now)
-        epoch = datetime_to_epoch(now)
-        print(epoch)
-        # 現在時刻から３時間後のEpochを計算する
-        now = (math.ceil(epoch / 10800)) * 10800
 
         for li in j[u"list"]:
             if "12:00:00" in li["dt_txt"]:
