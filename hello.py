@@ -64,7 +64,7 @@ def handle_follow(event):
     userid = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow([userid])
+        writer.writerow([str(userid)])
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
