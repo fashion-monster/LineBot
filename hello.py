@@ -93,7 +93,7 @@ def image_message(event):
         header = {'content-type':'application/json'}
 	data="{'image_path':'"+f_path+"'}"
         print(data)
-        print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data=f_path))
+        print(requests.post(url='http://127.0.0.1:9998/cloth_detect',headers=header, data=f_path))
         line_bot_api.reply_message(
             event.reply_token,[
                 TextSendMessage(text="IDは"),
