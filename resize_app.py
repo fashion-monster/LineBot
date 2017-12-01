@@ -4,7 +4,7 @@ from utils.reshape import reshape
 app = Flask(__name__)
 
 
-@app.route("/resize", methods=['PUT'])
+@app.route("/resize", methods=['POST'])
 def main():
     """
     resize method.
