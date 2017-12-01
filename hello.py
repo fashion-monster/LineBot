@@ -181,11 +181,17 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif ':Tops' in text:
+        with open('clothe_types.csv', 'w') as f:
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='登録完了です！!')
         )
     elif ':Bottoms' in text:
+        with open('clothe_types.csv', 'w') as f:
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='登録完了です！!')
