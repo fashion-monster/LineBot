@@ -61,6 +61,10 @@ def callback():
 
 @handler.add(FollowEvent)
 def handle_follow(event):
+    userid = event.source.user_id
+    with open('follower.csv', 'a') as f:
+        writer = csv.writer(f, lineterminator='\n')
+        writer.writerow(userid)
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -101,6 +105,11 @@ def image_message(event):
                 TextSendMessage(text='と入力してください')
             ]
         )
+#        line_bot_api.reply_message(
+#            event.reply_token,
+#            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
+#        )
     except:
         import traceback
         traceback.print_exc()
@@ -134,7 +143,16 @@ def handle_location(event):
 # pushメッセージ
 # @handler.add(MessageEvent)
 # def push_message():
-#    line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
+#    with open('follower.csv', 'r') as f:
+#        reader = csv.reader(f) # readerオブジェクトを作成
+#        header = next(reader)  # 最初の一行をヘッダーとして取得
+#        for row in reader:
+#        line_bot_api.push_message('reader',[
+#                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path),
+#                   ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
+#           ])
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -173,17 +191,6 @@ def confirm_message(event):
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
-    elif text == '登録':
-        confirm_template = ConfirmTemplate(text='登録する服の種類は？', actions=[
-            MessageTemplateAction(label='Tops', text='Tops'),
-            MessageTemplateAction(label='Bottoms', text='Bottoms'),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='Confirm alt text', template=confirm_template)
-        line_bot_api.reply_message(
-            event.reply_token,
-            template_message
-        )
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
     elif text == '確認':
@@ -198,7 +205,7 @@ def confirm_message(event):
             writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！!')
+            TextSendMessage(text='Topsの登録完了です！!')
         )
     elif ':Bottoms' in text:
         with open('clothe_types.csv', 'a') as f:
@@ -206,13 +213,13 @@ def confirm_message(event):
             writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！')
+            TextSendMessage(text='Bottomsの登録完了です！')
         )
     else:
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text='ご利用ありがとうございます'),
-                TextSendMessage(text='このbotはあなたが登録した服の中から次の日の服装を提案します'),
+                TextSendMessage(text='このbotはあなたが登録した服の中から明日の服装を提案します'),
                 TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
         )
