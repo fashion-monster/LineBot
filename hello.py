@@ -226,6 +226,30 @@ def confirm_message(event):
             ]
         )
 
+def similityRequest(image1_name, image2_name):
+    """
+    @param1 image1_name 画像1の名前(パスではないです) :string
+    @param2 image2_name 画像2の名前(パスではないです) :string
+
+    return  類似度の値 :string
+            ex.0.9960923888352317
+    """
+    response = requests.post('http://127.0.0.1:8050/similarity', data={"image1_name" : image1_name, "image2_name" : image2_name})
+    return response.text
+
+def pickRequest(image_name):
+    """
+    @param1 image_name 画像の名前(パスではないです) :string
+    
+    return  画像に含まれている色ベスト3 :dictionary(json)
+            ex.{"first_color":"red","second_color":"blue","third_color":"yello"}
+    """
+
+    headers = {"Content-Type" : "application/json"}
+    response = requests.post('http://127.0.0.1:8050/pick', data={"image_name" : image_name})
+    return response.text
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+

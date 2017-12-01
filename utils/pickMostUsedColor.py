@@ -19,7 +19,7 @@ def rgb2bin(red, green, blue):
 
 # 画像から最も使われている(WEARで定義されている)色を３色リストで返す
 def pickMostUsedColor(src_img_path):
-	src_img = cv2.imread("./tmp/dst/"+src_img_path)
+	src_img = cv2.imread("./tmp/cropped/"+src_img_path)
 	histogram = [0] * 64
 	
 	height = src_img.shape[0]
