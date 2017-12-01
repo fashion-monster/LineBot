@@ -17,7 +17,7 @@ def resize():
     :return: success or failed, cv2.imwrite
     """
 
-    image_name = request.form["image_path"]
+    image_name = request.data
     image = cv2.imread(filename='/home/hashimoto/LineBot' + image_name)
     if image is not None:
         print("image!!", type(image), image.shape)
