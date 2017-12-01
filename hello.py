@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import requests
+import csv
 
 from flask import Flask, request, abort
 from linebot import (
