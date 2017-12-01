@@ -196,7 +196,7 @@ def confirm_message(event):
             event.reply_token, [
                 TextSendMessage(text='ご利用ありがとうございます'),
                 TextSendMessage(text='このbotはあなたが登録した服の中から次の日の服装を提案します'),
-                TextSendMessage(text='服の追加は「登録」→服の種類選択→画像の送信の手順で行えます')
+                TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
         )
 
