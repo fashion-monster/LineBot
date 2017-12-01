@@ -211,7 +211,7 @@ def confirm_message(event):
         )
     elif ':Bottoms' in text:
         types = text.split(':')
-        type_list = [event.source.user_id,types[0]+'.jpg',types[1]]
+        type_list = [str(event.source.user_id),str(types[0]+'.jpg'),str(types[1])]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
             writer.writerow([type_list])
