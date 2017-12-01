@@ -91,7 +91,9 @@ def image_message(event):
                 fd.write(chunk)
 	print(f_path)
         header = {'content-type':'application/json'}
-        print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data="{'image_path':'"+f_path+"'}"))
+	data="{'image_path':'"+f_path+"'}"
+        print(data)
+        print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data=f_path))
         line_bot_api.reply_message(
             event.reply_token,
             ImageSendMessage(original_content_url='https://zoozoo-monster.work' + f_path,

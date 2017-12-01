@@ -17,18 +17,19 @@ def resize():
     """
 
     import numpy as np
-
-    image_name = request.form["image_path"]
-    image = cv2.imread(filename='/home/hashimoto/LineBot'+image_name)
+    print(request)
+    print(request.headers)
+    print(request.data)
+    image_name = request.data
     print(image_name)
+    image = cv2.imread(filename='/home/hashimoto/LineBot'+image_name)
     print("this is an image value:", image)
-    print('ha??????????/', type(image))
     if image is not None:
-        image = np.asarray(cv2.imread(filename=image_name))
+	print("image!!",type(image), image.shape)
         image = tf.constant(image)
         cropped_image = reshape(image=image, new_size=None)
-        DIRECTORY='cropped/'
-        cv2.imwrite(filename=DIRECTORY+image_name, img=cropped_image)
+        DIRECTORY='/home/hashimoto/LineBot/tmp/cropped/'
+        print(cv2.imwrite(filename=DIRECTORY+image_name, img=cropped_image.numpy()))
         return "Success"
     else:
         write_result = False
