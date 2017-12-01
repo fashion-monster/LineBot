@@ -160,7 +160,7 @@ def push_message():
         reader = csv.reader(f)  # readerオブジェクトを作成
         header = next(reader)  # 最初の一行をヘッダーとして取得
         print('header!!!!!!!',header)
-        for row in reader:
+        for _ in reader:
             line_bot_api.push_message(str(header[0]), [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
@@ -207,7 +207,7 @@ def confirm_message(event):
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
     elif text == u'テスト':
-        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', [TextSendMessage(text='message1')])
+        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
     elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
