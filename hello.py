@@ -2,7 +2,6 @@
 import os
 import requests
 import csv
-import cv2
 
 from flask import Flask, request, abort
 from linebot import (
