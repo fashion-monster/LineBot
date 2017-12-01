@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import requests
 
 from flask import Flask, request, abort
 from linebot import (
@@ -60,11 +61,11 @@ def callback():
 @handler.add(FollowEvent)
 def handle_follow(event):
     line_bot_api.reply_message(
-        event.reply_token,[
-        TextSendMessage(text="登録友達追加ありがとうございます"),
-        TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
-        TextSendMessage(text="初めに「チュートリアル」と入力してください!")
-    ]
+        event.reply_token, [
+            TextSendMessage(text="登録友達追加ありがとうございます"),
+            TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
+            TextSendMessage(text="初めに「チュートリアル」と入力してください!")
+        ]
     )
 
 
@@ -79,6 +80,7 @@ def handle_follow(event):
 
 @handler.add(MessageEvent, message=ImageMessage)
 def image_message(event):
+    """repeat gotten image"""
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
@@ -86,7 +88,7 @@ def image_message(event):
         with open(f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
-
+        requests.put(url='127.0.0.1:9999/resize', data="{'image_name':'"+f_path+"'}")
         line_bot_api.reply_message(
             event.reply_token,
             ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
@@ -101,11 +103,7 @@ def image_message(event):
 def handle_location(event):
     lat = str(event.message.latitude)
     lng = str(event.message.longitude)
-    print(lat)
-    print(lng)
     msg = ('your location is ' + lat + ',' + lng)
-    print(lat)
-    print(lng)
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -126,7 +124,7 @@ def handle_location(event):
 #            )
 
 
-# puthメッセージ
+# pushメッセージ
 # @handler.add(MessageEvent)
 # def push_message():
 #    line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
@@ -163,11 +161,11 @@ def confirm_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
     elif text == 'チュートリアル':
         line_bot_api.reply_message(
-            event.reply_token,[
-            TextSendMessage(text="Topsの登録を行います"),
-            TextSendMessage(text="「登録」と入力し、「Tops」をタップしてから画像の送信をしてください"),
-            TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
-        ])
+            event.reply_token, [
+                TextSendMessage(text="Topsの登録を行います"),
+                TextSendMessage(text="「登録」と入力し、「Tops」をタップしてから画像の送信をしてください"),
+                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
+            ])
     elif text == '登録':
         confirm_template = ConfirmTemplate(text='登録する服の種類は？', actions=[
             MessageTemplateAction(label='Tops', text='Tops'),
@@ -180,7 +178,7 @@ def confirm_message(event):
             template_message
         )
     elif text == 'テスト':
-        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextMessage(text='message1'))
+        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
     elif text == '確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
@@ -198,4 +196,4 @@ def confirm_message(event):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
