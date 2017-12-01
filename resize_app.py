@@ -28,7 +28,9 @@ def resize():
 	print("image!!",type(image), image.shape)
         image = tf.constant(image)
         cropped_image = reshape(image=image, new_size=None)
+	image_name = image_name.split('/')[-1]
         DIRECTORY='/home/hashimoto/LineBot/tmp/cropped/'
+	print(cropped_image.numpy().shape)
         print(cv2.imwrite(filename=DIRECTORY+image_name, img=cropped_image.numpy()))
         return "Success"
     else:
