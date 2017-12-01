@@ -89,23 +89,15 @@ def image_message(event):
         with open('.'+f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
-<<<<<<< HEAD
                 print(f_path)
                 header = {'content-type':'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data="{'image_path':'"+f_path+"'}"))
-=======
-	print(f_path)
-        header = {'content-type':'application/json'}
-	data="{'image_path':'"+f_path+"'}"
-        print(data)
-        print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data=f_path))
->>>>>>> 3717c040c064ab52afe4e3de94c7f93042ef9c12
         line_bot_api.reply_message(
             event.reply_token,[
-                TextSendMessage(text="IDは"),
-                TextSendMessage(text=msg_id),
-                TextSendMessage(text="Topsの場合は[ID:Tops]"),
-                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]"),
+                TextSendMessage(text="Topsの場合は"),
+                TextSendMessage(text=msg_id + ":Tops"),
+                TextSendMessage(text="Bottomsの場合は"),
+                TextSendMessage(text=msg_id +":Bottoms"),
                 TextSendMessage(text="と入力してください")
             ]
         )
