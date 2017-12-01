@@ -11,8 +11,8 @@ def reshape(image, new_size):
         reshaped: reshaped images
     """
     max_size = size_decision(image)
-    new_height = 604
-    new_width = 604
+    new_height = 300
+    new_width = 300
     if new_size is not None:
         try:
             new_height = new_size[0]
@@ -22,7 +22,7 @@ def reshape(image, new_size):
         except IndexError:
             raise IndexError
 
-    reshaped = tf.image.resize_images(tf.image.resize_image_with_crop_or_pad(image, max_size, max_size),
+    reshaped = tf.image.resize_images(image,
                                       [new_height, new_width])
     return reshaped
 
