@@ -2,6 +2,7 @@
 import os
 import requests
 import csv
+import utils.weather as weather
 
 from flask import Flask, request, abort
 from linebot import (
@@ -132,7 +133,9 @@ def image_message(event):
 def handle_location(event):
     lat = str(event.message.latitude)
     lng = str(event.message.longitude)
-    msg = ('your location is ' + lat + ',' + lng)
+    w = weather.Weather(lat=lat, lon=lng)
+    temp = w.get_temp_max()
+    msg = ('your location is ' + temp)
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -205,7 +208,7 @@ def confirm_message(event):
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
     elif text == u'テスト':
-        line_bot_api.push_message(u'U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
+        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', [TextSendMessage(text='message1')])
     elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
