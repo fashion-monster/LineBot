@@ -19,16 +19,19 @@ def resize():
     import numpy as np
 
     image_name = request.args.get("image_path")
-    image = np.asarray(cv2.imread(filename=image_name))
+    image = cv2.imread(filename=image_name)
     print("this is an image value:", image)
-    if (image is not None) or (image[0] is not None):
+    print('ha??????????/', type(image))
+    if image is not None:
+        image = np.asarray(cv2.imread(filename=image_name))
         image = tf.constant(image)
         cropped_image = reshape(image=image, new_size=None)
         DIRECTORY='cropped/'
-        write_result = cv2.imwrite(filename=DIRECTORY+image_name, img=cropped_image)
+        cv2.imwrite(filename=DIRECTORY+image_name, img=cropped_image)
+        return "Success"
     else:
         write_result = False
-    return write_result
+        return "Failed"
 
 
 if __name__ == '__main__':
