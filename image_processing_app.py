@@ -50,6 +50,8 @@ def similarity():
     """
     image1_name = request.form["image1_name"]
     image2_name = request.form["image2_name"]
+    print(image1_name, image2_name)
+
     simi = calculateColorSimilarity(image1_name, image2_name)
     response = make_response()
     response.data = json.dumps({"similarity": simi})
