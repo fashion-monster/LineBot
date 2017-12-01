@@ -64,7 +64,7 @@ def handle_follow(event):
     userid = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow(userid)
+        writer.writerow([userid])
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -204,7 +204,7 @@ def confirm_message(event):
     elif ':Tops' in text:
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow(text)
+            writer.writerow([text])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Topsの登録完了です！!')
@@ -212,7 +212,7 @@ def confirm_message(event):
     elif ':Bottoms' in text:
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow(text)
+            writer.writerow([text])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Bottomsの登録完了です！')
