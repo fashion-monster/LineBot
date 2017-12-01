@@ -92,14 +92,14 @@ def image_message(event):
 	print(f_path)
         header = {'content-type':'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data="{'image_path':'"+f_path+"'}"))
-        line_bot_api.reply_message(
-            event.reply_token,[
-                TextSendMessage(text="IDは"),
-                TextSendMessage(text=msg_id),
-                TextSendMessage(text="Topsの場合は[ID:Tops]"),
-                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]と入力してください")
-            ]
-        )
+#        line_bot_api.reply_message(
+#            event.reply_token,[
+#                TextSendMessage(text="IDは"),
+#                TextSendMessage(text=msg_id),
+#                TextSendMessage(text="Topsの場合は[ID:Tops]"),
+#                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]と入力してください")
+#            ]
+#        )
     except:
         import traceback
         traceback.print_exc()
@@ -179,6 +179,16 @@ def confirm_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=test_text)
+        )
+    elif ':Tops' in text:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='登録完了です!')
+        )
+    elif ':Bottoms' in text:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='登録完了です!')
         )
     else:
         line_bot_api.reply_message(
