@@ -1,7 +1,7 @@
 # coding=utf-8
 import os
 import requests
-import json
+import csv
 
 from flask import Flask, request, abort
 from linebot import (
@@ -61,12 +61,16 @@ def callback():
 
 @handler.add(FollowEvent)
 def handle_follow(event):
+    userid = event.source.user_id
+    with open('follower.csv', 'a') as f:
+        writer = csv.writer(f, lineterminator='\n')
+        writer.writerow(userid)
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
             TextSendMessage(text="初めに「チュートリアル」と入力してください!")
-        ]
+    ]
     )
 
 
@@ -86,7 +90,7 @@ def image_message(event):
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
     try:
-        with open('.'+f_path, 'wb') as fd:
+        with open('.' + f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
 	print(f_path)
@@ -95,14 +99,19 @@ def image_message(event):
         print(data)
         print(requests.post(url='http://127.0.0.1:9998/cloth_detect',headers=header, data=f_path))
         line_bot_api.reply_message(
-            event.reply_token,[
-                TextSendMessage(text="IDは"),
-                TextSendMessage(text=msg_id),
-                TextSendMessage(text="Topsの場合は[ID:Tops]"),
-                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]"),
-                TextSendMessage(text="と入力してください")
+            event.reply_token, [
+                TextSendMessage(text='Topsの場合は'),
+                TextSendMessage(text=msg_id + ':Tops'),
+                TextSendMessage(text='Bottomsの場合は'),
+                TextSendMessage(text=msg_id + ':Bottoms'),
+                TextSendMessage(text='と入力してください')
             ]
         )
+#        line_bot_api.reply_message(
+#            event.reply_token,
+#            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
+#        )
     except:
         import traceback
         traceback.print_exc()
@@ -136,7 +145,16 @@ def handle_location(event):
 # pushメッセージ
 # @handler.add(MessageEvent)
 # def push_message():
-#    line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
+#    with open('follower.csv', 'r') as f:
+#        reader = csv.reader(f) # readerオブジェクトを作成
+#        header = next(reader)  # 最初の一行をヘッダーとして取得
+#        for row in reader:
+#        line_bot_api.push_message('reader',[
+#                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path),
+#                   ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
+#           ])
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -184,20 +202,26 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif ':Tops' in text:
+        with open('clothe_types.csv', 'a') as f:
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！!')
+            TextSendMessage(text='Topsの登録完了です！!')
         )
     elif ':Bottoms' in text:
+        with open('clothe_types.csv', 'a') as f:
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！!')
+            TextSendMessage(text='Bottomsの登録完了です！')
         )
     else:
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text='ご利用ありがとうございます'),
-                TextSendMessage(text='このbotはあなたが登録した服の中から次の日の服装を提案します'),
+                TextSendMessage(text='このbotはあなたが登録した服の中から明日の服装を提案します'),
                 TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
         )
