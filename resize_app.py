@@ -4,6 +4,7 @@ from utils.reshape import reshape
 import cv2
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
+
 app = Flask(__name__)
 
 
@@ -17,6 +18,11 @@ def resize():
     """
 
     import numpy as np
+<<<<<<< HEAD
+
+    image_name = request.form["image_path"]
+    image = cv2.imread(filename='/home/hashimoto/LineBot' + image_name)
+=======
     print(request)
     print(request.headers)
     print(request.data)
@@ -24,14 +30,20 @@ def resize():
     print(image_name)
     image = cv2.imread(filename='/home/hashimoto/LineBot'+image_name)
     print("this is an image value:", image)
+>>>>>>> d85f3547fb9f200325911bdc9f6498f80be9772f
     if image is not None:
 	print("image!!",type(image), image.shape)
         image = tf.constant(image)
         cropped_image = reshape(image=image, new_size=None)
+<<<<<<< HEAD
+        DIRECTORY = 'cropped/'
+        cv2.imwrite(filename=DIRECTORY + image_name, img=cropped_image)
+=======
 	image_name = image_name.split('/')[-1]
         DIRECTORY='/home/hashimoto/LineBot/tmp/cropped/'
 	print(cropped_image.numpy().shape)
         print(cv2.imwrite(filename=DIRECTORY+image_name, img=cropped_image.numpy()))
+>>>>>>> d85f3547fb9f200325911bdc9f6498f80be9772f
         return "Success"
     else:
         write_result = False
@@ -40,5 +52,5 @@ def resize():
 
 if __name__ == '__main__':
     tfe.enable_eager_execution()
-    app.debut=True
+    app.debut = True
     app.run(port=9999)
