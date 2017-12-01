@@ -135,8 +135,7 @@ def handle_location(event):
     lng = str(event.message.longitude)
     w = weather.Weather(lat=lat, lon=lng)
     temp = w.get_temp_max()
-    msg = ('your location is ' + temp)
-
+    msg = ('your location is ' + str(temp))
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=msg))
