@@ -175,10 +175,6 @@ def confirm_message(event):
         ])
         template_message = TemplateSendMessage(
             alt_text='Confirm alt text', template=confirm_template)
-        line_bot_api.push_message(
-            event.source.user_id,
-            template_message
-        )
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextMessage(text='message1'))
     elif text == '確認':
