@@ -21,7 +21,7 @@ def resize():
     image_name = request.args.get("image_path")
     image = np.asarray(cv2.imread(filename=image_name))
     print("this is an image value:", image)
-    if image is not None:
+    if (image is not None) or (image[0] is not None):
         image = tf.constant(image)
         cropped_image = reshape(image=image, new_size=None)
         DIRECTORY='cropped/'
