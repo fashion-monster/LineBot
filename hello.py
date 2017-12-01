@@ -64,7 +64,7 @@ def handle_follow(event):
     userid = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow(userid)
+        writer.writerow([str(userid)])
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -72,6 +72,17 @@ def handle_follow(event):
             TextSendMessage(text="初めに「チュートリアル」と入力してください!")
     ]
     )
+
+@handler.add(UnfollowEvent)
+def handle_unfollow(event):
+    userid = event.source.user_id
+    with open('follower.csv', 'r') as f:
+        reader = csv.reader(f) # readerオブジェクトを作成
+        reader.remove(userid)
+    with open('follower.csv', 'a') as f:
+        writer = csv.writer(f, lineterminator='\n')
+        for row in reader:
+            writer.writerow([reader])
 
 
 # 画像IDを返す
@@ -202,17 +213,21 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif ':Tops' in text:
+        types = text.split(':')
+        type_list = [str(event.source.user_id),str(types[0]+'.jpg'),str(types[1])]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow(text)
+            writer.writerow([type_list])
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='Topsの登録完了です！!')
+            TextSendMessage(text='Topsの登録完了です！')
         )
     elif ':Bottoms' in text:
+        types = text.split(':')
+        type_list = [str(event.source.user_id),str(types[0]+'.jpg'),str(types[1])]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow(text)
+            writer.writerow([type_list])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Bottomsの登録完了です！')
