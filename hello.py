@@ -91,8 +91,9 @@ def image_message(event):
         print(f_path)
         header = {'content-type': 'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize', headers=header, data="{'image_path':'" + f_path + "'}"))
+
         line_bot_api.reply_message(
-            event.reply_token,[
+            event.reply_token, [
                 TextSendMessage(text='Topsの場合は'),
                 TextSendMessage(text=msg_id + ':Tops'),
                 TextSendMessage(text='Bottomsの場合は'),
