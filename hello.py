@@ -81,7 +81,8 @@ def handle_unfollow(event):
         reader.remove(userid)
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow([reader])
+        for row in reader:
+            writer.writerow([reader])
 
 
 # 画像IDを返す
