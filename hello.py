@@ -174,11 +174,17 @@ def confirm_message(event):
             MessageTemplateAction(label='Bottoms', text='Bottoms'),
         ])
         template_message = TemplateSendMessage(
-            alt_text='Confirm alt text', template=confirm_template)
-        line_bot_api.reply_message(
-            event.reply_token,
-            template_message
-        )
+        alt_text='Confirm alt text', template=confirm_template)
+        if(template_message=='Tops')
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='Topsの画像を送信してください')
+            )
+        elif(template_message=='Bottmoms')
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='Bottomsの画像を送信してください')
+            )
     elif text == 'Tops':
         line_bot_api.reply_message(
             event.reply_token,
