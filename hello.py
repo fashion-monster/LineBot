@@ -65,7 +65,7 @@ def handle_follow(event):
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
-            TextSendMessage(text="初めに「チュートリアル」と入力してください!!")
+            TextSendMessage(text="初めに「チュートリアル」と入力してください!")
         ]
     )
 
@@ -92,14 +92,15 @@ def image_message(event):
 	print(f_path)
         header = {'content-type':'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data="{'image_path':'"+f_path+"'}"))
-#        line_bot_api.reply_message(
-#            event.reply_token,[
-#                TextSendMessage(text="IDは"),
-#                TextSendMessage(text=msg_id),
-#                TextSendMessage(text="Topsの場合は[ID:Tops]"),
-#                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]と入力してください")
-#            ]
-#        )
+        line_bot_api.reply_message(
+            event.reply_token,[
+                TextSendMessage(text="IDは"),
+                TextSendMessage(text=msg_id),
+                TextSendMessage(text="Topsの場合は[ID:Tops]"),
+                TextSendMessage(text="Bottomsの場合は[ID:Bottoms]"),
+                TextSendMessage(text="と入力してください")
+            ]
+        )
     except:
         import traceback
         traceback.print_exc()
@@ -170,7 +171,7 @@ def confirm_message(event):
             event.reply_token, [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
-                TextSendMessage(text="画像登録が成功すればチュートリアル終了です!")
+                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
@@ -183,17 +184,17 @@ def confirm_message(event):
     elif ':Tops' in text:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です!')
+            TextSendMessage(text='登録完了です！!')
         )
     elif ':Bottoms' in text:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です!')
+            TextSendMessage(text='登録完了です！!')
         )
     else:
         line_bot_api.reply_message(
             event.reply_token, [
-                TextSendMessage(text='ご利用ありがとうございます!'),
+                TextSendMessage(text='ご利用ありがとうございます'),
                 TextSendMessage(text='このbotはあなたが登録した服の中から次の日の服装を提案します'),
                 TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
