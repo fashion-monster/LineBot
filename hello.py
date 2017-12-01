@@ -88,13 +88,23 @@ def image_message(event):
         with open('.' + f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
+<<<<<<< HEAD
         print(f_path)
         header = {'content-type': 'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize', headers=header, data="{'image_path':'" + f_path + "'}"))
+=======
+                print(f_path)
+                header = {'content-type':'application/json'}
+        print(requests.post(url='http://127.0.0.1:9999/resize',headers=header, data="{'image_path':'"+f_path+"'}"))
+>>>>>>> d85f3547fb9f200325911bdc9f6498f80be9772f
         line_bot_api.reply_message(
-            event.reply_token,
-            ImageSendMessage(original_content_url='https://zoozoo-monster.work' + f_path,
-                             preview_image_url='https://zoozoo-monster.work' + f_path)
+            event.reply_token,[
+                TextSendMessage(text="Topsの場合は"),
+                TextSendMessage(text=msg_id + ":Tops"),
+                TextSendMessage(text="Bottomsの場合は"),
+                TextSendMessage(text=msg_id +":Bottoms"),
+                TextSendMessage(text="と入力してください")
+            ]
         )
     except:
         import traceback
@@ -165,20 +175,9 @@ def confirm_message(event):
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text="Topsの登録を行います"),
-                TextSendMessage(text="「登録」と入力し、「Tops」をタップしてから画像の送信をしてください"),
+                TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
-    elif text == '登録':
-        confirm_template = ConfirmTemplate(text='登録する服の種類は？', actions=[
-            MessageTemplateAction(label='Tops', text='Tops'),
-            MessageTemplateAction(label='Bottoms', text='Bottoms'),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='Confirm alt text', template=confirm_template)
-        line_bot_api.reply_message(
-            event.reply_token,
-            template_message
-        )
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
     elif text == '確認':
@@ -187,12 +186,22 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text=test_text)
         )
+    elif ':Tops' in text:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='登録完了です！!')
+        )
+    elif ':Bottoms' in text:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='登録完了です！!')
+        )
     else:
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text='ご利用ありがとうございます'),
                 TextSendMessage(text='このbotはあなたが登録した服の中から次の日の服装を提案します'),
-                TextSendMessage(text='服の追加は「登録」→服の種類選択→画像の送信の手順で行えます')
+                TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
         )
 
