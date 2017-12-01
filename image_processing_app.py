@@ -1,3 +1,4 @@
+# coding=utf-8
 from flask import Flask, request, make_response
 from utils.calculateColorSimilarity import calculateColorSimilarity
 from utils.pickMostUsedColor import pickMostUsedColor
