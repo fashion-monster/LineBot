@@ -66,7 +66,7 @@ def handle_follow(event):
             TextSendMessage(text="登録友達追加ありがとうございます"),
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
             TextSendMessage(text="初めに「チュートリアル」と入力してください!")
-        ]
+    ]
     )
 
 
@@ -173,6 +173,17 @@ def confirm_message(event):
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
+    elif text == '登録':
+        confirm_template = ConfirmTemplate(text='登録する服の種類は？', actions=[
+            MessageTemplateAction(label='Tops', text='Tops'),
+            MessageTemplateAction(label='Bottoms', text='Bottoms'),
+        ])
+        template_message = TemplateSendMessage(
+            alt_text='Confirm alt text', template=confirm_template)
+        line_bot_api.reply_message(
+            event.reply_token,
+            template_message
+        )
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
     elif text == '確認':
