@@ -61,6 +61,10 @@ def callback():
 
 @handler.add(FollowEvent)
 def handle_follow(event):
+    userid = event.source.user_id
+    with open('follower.csv', 'a') as f:
+        writer = csv.writer(f, lineterminator='\n')
+        writer.writerow(userid)
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -187,7 +191,7 @@ def confirm_message(event):
             writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！!')
+            TextSendMessage(text='Topsの登録完了です！!')
         )
     elif ':Bottoms' in text:
         with open('clothe_types.csv', 'a') as f:
@@ -195,13 +199,13 @@ def confirm_message(event):
             writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！')
+            TextSendMessage(text='Bottomsの登録完了です！')
         )
     else:
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text='ご利用ありがとうございます'),
-                TextSendMessage(text='このbotはあなたが登録した服の中から次の日の服装を提案します'),
+                TextSendMessage(text='このbotはあなたが登録した服の中から明日の服装を提案します'),
                 TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
         )
