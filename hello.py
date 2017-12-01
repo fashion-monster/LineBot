@@ -105,6 +105,11 @@ def image_message(event):
                 TextSendMessage(text='と入力してください')
             ]
         )
+#        line_bot_api.reply_message(
+#            event.reply_token,
+#            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
+#        )
     except:
         import traceback
         traceback.print_exc()
@@ -138,7 +143,16 @@ def handle_location(event):
 # pushメッセージ
 # @handler.add(MessageEvent)
 # def push_message():
-#    line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b',TextMessage(text='message1'))
+#    with open('follower.csv', 'r') as f:
+#        reader = csv.reader(f) # readerオブジェクトを作成
+#        header = next(reader)  # 最初の一行をヘッダーとして取得
+#        for row in reader:
+#        line_bot_api.push_message('reader',[
+#                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path),
+#                   ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
+#           ])
 
 
 @handler.add(MessageEvent, message=TextMessage)
