@@ -6,6 +6,12 @@ app = Flask(__name__)
 
 @app.route("/resize", methods=['PUT'])
 def main():
+    """
+    resize method.
+    Read "image_name" key and resize it.
+
+    :return: success or failed, cv2.imwrite
+    """
     import tensorflow as tf
     import tensorflow.contrib.eager as tfe
     import cv2
