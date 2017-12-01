@@ -208,7 +208,7 @@ def confirm_message(event):
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
     elif text == u'テスト':
-        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', [TextSendMessage(text='message1')])
+        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
     elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
