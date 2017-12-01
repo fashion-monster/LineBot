@@ -18,8 +18,9 @@ def resize():
 
     import numpy as np
 
-    image_name = request.args.get("image_path")
-    image = cv2.imread(filename=image_name)
+    image_name = request.form["image_path"]
+    image = cv2.imread(filename='/home/hashimoto/LineBot'+image_name)
+    print(image_name)
     print("this is an image value:", image)
     print('ha??????????/', type(image))
     if image is not None:
@@ -36,4 +37,5 @@ def resize():
 
 if __name__ == '__main__':
     tfe.enable_eager_execution()
+    app.debut=True
     app.run(port=9999)
