@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import requests
+import csv
 
 from flask import Flask, request, abort
 from linebot import (
@@ -65,7 +66,7 @@ def handle_follow(event):
             TextSendMessage(text="登録友達追加ありがとうございます"),
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
             TextSendMessage(text="初めに「チュートリアル」と入力してください!")
-        ]
+    ]
     )
 
 
@@ -91,7 +92,6 @@ def image_message(event):
         print(f_path)
         header = {'content-type': 'application/json'}
         print(requests.post(url='http://127.0.0.1:9999/resize', headers=header, data="{'image_path':'" + f_path + "'}"))
-
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text='Topsの場合は'),
@@ -173,6 +173,17 @@ def confirm_message(event):
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
+    elif text == '登録':
+        confirm_template = ConfirmTemplate(text='登録する服の種類は？', actions=[
+            MessageTemplateAction(label='Tops', text='Tops'),
+            MessageTemplateAction(label='Bottoms', text='Bottoms'),
+        ])
+        template_message = TemplateSendMessage(
+            alt_text='Confirm alt text', template=confirm_template)
+        line_bot_api.reply_message(
+            event.reply_token,
+            template_message
+        )
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
     elif text == '確認':
@@ -182,14 +193,20 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif ':Tops' in text:
+        with open('clothe_types.csv', 'a') as f:
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='登録完了です！!')
         )
     elif ':Bottoms' in text:
+        with open('clothe_types.csv', 'a') as f:
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！!')
+            TextSendMessage(text='登録完了です！')
         )
     else:
         line_bot_api.reply_message(
