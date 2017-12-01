@@ -1,9 +1,9 @@
-from flask import Flask, request
-from utils.reshape import reshape
-
 import cv2
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
+from flask import Flask, request
+
+from utils.reshape import reshape
 
 app = Flask(__name__)
 
@@ -17,8 +17,7 @@ def resize():
     :return: success or failed, cv2.imwrite
     """
 
-    import numpy as np
-    image_name = request.form["image_path"]
+    image_name = request.data
     image = cv2.imread(filename='/home/hashimoto/LineBot' + image_name)
     if image is not None:
         print("image!!", type(image), image.shape)
