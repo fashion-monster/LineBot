@@ -175,18 +175,18 @@ def confirm_message(event):
         ])
         template_message = TemplateSendMessage(
         alt_text='Confirm alt text', template=confirm_template)
-        if template_message=='Tops':
-        test_text = event.source.user_id
-            line_bot_api.push_message(
-                test_text,
-                TextSendMessage(text='Topsの画像を送信してください')
-            )
-        elif template_message=='Bottmoms':
-        test_text = event.source.user_id
-            line_bot_api.push_message(
-                test_text,
-                TextSendMessage(text='Bottomsの画像を送信してください')
-            )
+            if template_message=='Tops':
+            test_text = event.source.user_id
+                line_bot_api.push_message(
+                    test_text,
+                    TextSendMessage(text='Topsの画像を送信してください')
+                )
+            elif template_message=='Bottmoms':
+            test_text = event.source.user_id
+                line_bot_api.push_message(
+                    test_text,
+                    TextSendMessage(text='Bottomsの画像を送信してください')
+                )
     elif text == 'テスト':
         line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextMessage(text='message1'))
     elif text == '確認':
