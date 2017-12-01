@@ -180,16 +180,6 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text=test_text)
         )
-    elif ':Tops' in text:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='登録完了です!')
-        )
-    elif ':Bottoms' in text:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='登録完了です!')
-        )
     else:
         line_bot_api.reply_message(
             event.reply_token, [
