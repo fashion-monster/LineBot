@@ -11,7 +11,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    ImageSendMessage,UnfollowEvent,
+    ImageSendMessage, UnfollowEvent,
     FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage, ConfirmTemplate,
     MessageTemplateAction, TemplateSendMessage, ButtonsTemplate, URITemplateAction, PostbackTemplateAction
 )
@@ -70,8 +70,9 @@ def handle_follow(event):
             TextSendMessage(text="登録友達追加ありがとうございます"),
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
             TextSendMessage(text="初めに「チュートリアル」と入力してください!")
-    ]
+        ]
     )
+
 
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
@@ -104,11 +105,11 @@ def image_message(event):
         with open('.' + f_path, 'wb') as fd:
             for chunk in message_content.iter_content():
                 fd.write(chunk)
-	print(f_path)
-        header = {'content-type':'application/json'}
-	data="{'image_path':'"+f_path+"'}"
+        print(f_path)
+        header = {'content-type': 'application/json'}
+        data = "{'image_path':'" + f_path + "'}"
         print(data)
-        print(requests.post(url='http://127.0.0.1:9998/cloth_detect',headers=header, data=f_path))
+        print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
         line_bot_api.reply_message(
             event.reply_token, [
                 TextSendMessage(text='Topsの場合は'),
@@ -118,11 +119,11 @@ def image_message(event):
                 TextSendMessage(text='と入力してください')
             ]
         )
-#        line_bot_api.reply_message(
-#            event.reply_token,
-#            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
-#                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
-#        )
+    #        line_bot_api.reply_message(
+    #            event.reply_token,
+    #            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
+    #                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
+    #        )
     except:
         import traceback
         traceback.print_exc()
@@ -154,11 +155,11 @@ def handle_location(event):
 
 @app.route('/push_message', methods=['POST'])
 def push_message():
-   with open('follower.csv', 'r') as f:
-       reader = csv.reader(f) # readerオブジェクトを作成
-       header = next(reader)  # 最初の一行をヘッダーとして取得
-       for row in reader:
-           line_bot_api.push_message('reader',[
+    with open('follower.csv', 'r') as f:
+        reader = csv.reader(f)  # readerオブジェクトを作成
+        header = next(reader)  # 最初の一行をヘッダーとして取得
+        for row in reader:
+            line_bot_api.push_message('reader', [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
@@ -211,7 +212,7 @@ def confirm_message(event):
         )
     elif ':Tops' in text:
         types = text.split(':')
-        type_list = [str(event.source.user_id),str(types[0]+'.jpg'),str(types[1])]
+        type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
             writer.writerow(type_list)
@@ -221,7 +222,7 @@ def confirm_message(event):
         )
     elif ':Bottoms' in text:
         types = text.split(':')
-        type_list = [str(event.source.user_id),str(types[0]+'.jpg'),str(types[1])]
+        type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
             writer.writerow(type_list)
@@ -238,30 +239,36 @@ def confirm_message(event):
             ]
         )
 
-def similityRequest(image1_name, image2_name):
-    """
-    @param1 image1_name 画像1の名前(パスではないです) :string
-    @param2 image2_name 画像2の名前(パスではないです) :string
 
-    return  類似度の値 :string
-            ex.0.9960923888352317
+def similarity_request(image1_name, image2_name):
     """
-    response = requests.post('http://127.0.0.1:8050/similarity', data={"image1_name" : image1_name, "image2_name" : image2_name})
+    Args:
+        image1_name 画像1の名前(パスではないです) :string
+        image2_name 画像2の名前(パスではないです) :string
+
+    Returns:
+        類似度の値 :string
+        ex.0.9960923888352317
+    """
+    response = requests.post('http://127.0.0.1:8050/similarity',
+                             data={"image1_name": image1_name, "image2_name": image2_name})
     return response.text
 
-def pickRequest(image_name):
+
+def pick_request(image_name):
     """
-    @param1 image_name 画像の名前(パスではないです) :string
+    Args:
+        image_name 画像の名前(パスではないです) :string
     
-    return  画像に含まれている色ベスト3 :dictionary(json)
-            ex.{"first_color":"red","second_color":"blue","third_color":"yello"}
+    Returns:
+        画像に含まれている色ベスト3 :dictionary(json)
+        ex.{"first_color":"red","second_color":"blue","third_color":"yellow"}
     """
 
-    headers = {"Content-Type" : "application/json"}
-    response = requests.post('http://127.0.0.1:8050/pick', data={"image_name" : image_name})
+    headers = {"Content-Type": "application/json"}
+    response = requests.post('http://127.0.0.1:8050/pick', data={"image_name": image_name})
     return response.text
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
