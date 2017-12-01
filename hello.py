@@ -195,7 +195,7 @@ def confirm_message(event):
             writer.writerow(text)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='登録完了です！!')
+            TextSendMessage(text='登録完了です！')
         )
     else:
         line_bot_api.reply_message(
