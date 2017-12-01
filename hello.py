@@ -200,17 +200,21 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif ':Tops' in text:
+        types = text.split(':')
+        type_list = [event.source.user_id,texts[0]+'.jpg',texts[1]]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow([text])
+            writer.writerow([typs_list])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Topsの登録完了です！!')
         )
     elif ':Bottoms' in text:
+        types = text.split(':')
+        type_list = [event.source.user_id,texts[0]+'.jpg',texts[1]]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow([text])
+            writer.writerow([typs_list])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Bottomsの登録完了です！')
