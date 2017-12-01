@@ -11,7 +11,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    ImageSendMessage,
+    ImageSendMessage,UnfollowEvent,
     FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage, ConfirmTemplate,
     MessageTemplateAction, TemplateSendMessage, ButtonsTemplate, URITemplateAction, PostbackTemplateAction
 )
@@ -64,7 +64,7 @@ def handle_follow(event):
     userid = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow([str(userid)])
+        writer.writerow(str(userid))
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -77,12 +77,12 @@ def handle_follow(event):
 def handle_unfollow(event):
     userid = event.source.user_id
     with open('follower.csv', 'r') as f:
-        reader = csv.reader(f) # readerオブジェクトを作成
-        reader.remove(userid)
+        readers = csv.reader(f)
+        readers.remove(userid)
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        for row in reader:
-            writer.writerow([reader])
+        for reader in readers:
+            writer.writerow(reader)
 
 
 # 画像IDを返す
