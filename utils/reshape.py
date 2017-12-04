@@ -49,9 +49,10 @@ if __name__ == '__main__':
 
     tfe.enable_eager_execution()
     DIRECTORY = './copy'
+    dirs = ["0", "1", "2"]
 
-    image_names = [x for x in os.listdir('original')]
-
-    for x in image_names:
-        img = reshape(tf.constant(np.asarray(cv2.imread('original/' + x))), None).numpy()
-        print(cv2.imwrite(DIRECTORY + '/' + x, img))  # show T or F
+    for dir_name in dirs:
+        for image_name in os.listdir(dir_name):
+            img_full_path = dir_name + "/" + image_name
+            img = reshape(image=tf.constant(np.asarray(cv2.imread(img_full_path))), new_size=None).numpy()
+            print(cv2.imwrite(DIRECTORY + '/' + img_full_path, img))
