@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     tfe.enable_eager_execution()
     DIRECTORY = './copy'
-    dirs = ["0", "1", "2"]
+    dirs = ["0"]
 
     for dir_name in dirs:
         for image_name in os.listdir(dir_name):
