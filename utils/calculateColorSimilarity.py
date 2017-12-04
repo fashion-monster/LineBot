@@ -41,7 +41,7 @@ def calculateColorSimilarity(img1_path, img2_path):
     img1 = cv2.imread("./tmp/cropped/" + img1_path)
     img2 = cv2.imread("./tmp/cropped/" + img2_path)
 
-    if(img1.type() == 'NoneType' or img2.type() == 'NoneType'):
+    if not img1 is None and not img2 is None:
     	return 0
 
     tops1 = posterizeImage(img1)
