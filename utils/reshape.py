@@ -11,8 +11,8 @@ def reshape(image, new_size):
         reshaped: reshaped images
     """
     max_size = size_decision(image)
-    new_height = 300
-    new_width = 300
+    new_height = 604
+    new_width = 604
     if new_size is not None:
         try:
             new_height = new_size[0]
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     import tensorflow.contrib.eager as tfe  # Version 1.5.0 or higher
 
     tfe.enable_eager_execution()
-    DIRECTORY = './copy'
+    DIRECTORY = 'ae'
     dirs = ["0"]
 
     for dir_name in dirs:
