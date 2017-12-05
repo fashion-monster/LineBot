@@ -40,19 +40,12 @@ for clothe in clothe_data:
 			if item != "" and user_clothe_type == "Tops" and i < 4:
 				ranking_tops = item
 				simi = calculateColorSimilarity(ranking_tops, user_clothe)
-				print([user_id, user_clothe, ranking_tops, rank, simi])
+				output_data.append([user_id, user_clothe, ranking_tops, user_clothe_type, rank, simi])
 			elif item != "" and user_clothe_type == "Bottoms" and i > 3:
 				ranking_bottoms = item
-				simi = calculateColorSimilarity(ranking_tops, user_clothe)
-				print([user_id, user_clothe, ranking_bottoms, rank, simi])
-			
+				simi = calculateColorSimilarity(ranking_bottoms, user_clothe)
+				output_data.append([user_id, user_clothe, ranking_bottoms, user_clothe_type, rank, simi])
 
-
-
-print(champ_data[0][0])
-print(closet_data[0][1])
-print(user_list[0][0])
-
-
-
-# writeCsv("all_pattern_of_Similarity.csv", output_data)
+with open('all_pattern_of_Similarity.csv', 'a') as f:
+    writer = csv.writer(f, lineterminator='\n') # 改行コード（\n）を指定しておく
+    writer.writerows(output_data) # 2次元配列も書き込める
