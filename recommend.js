@@ -4,7 +4,7 @@
     
     const BORDER_SIMILARITY = 0.5;
     
-    const file = './all_pattern_of_Similarity.csv';
+    const file = './all_pattern_of_Similarity2.csv';
     const fetch = require('node-fetch');
 
     let data = fs.readFileSync(file);
