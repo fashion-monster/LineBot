@@ -30,13 +30,13 @@ handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 @app.route("/")
 def route_dir():
     html = """<head> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap
-    .min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" 
-    crossorigin="anonymous"> <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
+    .min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+    crossorigin="anonymous"> <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper
-    .min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" 
+    .min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
     crossorigin="anonymous"></script> <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap
-    .min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" 
+    .min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
     crossorigin="anonymous"></script> </head> <body> <h1>Hello world</h1> </body> """
     return html
 
@@ -214,6 +214,17 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text=test_text)
         )
+    elif text == 'demo':
+        f_path_tops = 'sumple'
+        f_path_bottoms = 'sumple'
+        line_bot_api.push_message(
+                    'U4fce6cc2cc3530ae2f4b7ca0609edd40',[
+                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
+                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
+                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
+                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
+            ]
+        )
     elif ':Tops' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
@@ -263,7 +274,7 @@ def pick_request(image_name):
     """
     Args:
         image_name 画像の名前(パスではないです) :string
-    
+
     Returns:
         画像に含まれている色ベスト3 :dictionary(json)
         ex.{"first_color":"red","second_color":"blue","third_color":"yellow"}
