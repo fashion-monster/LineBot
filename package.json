@@ -18,6 +18,7 @@
   "homepage": "https://github.com/fashion-monster/LineBot#readme",
   "dependencies": {
     "csv-parse": "^2.0.0",
+    "express": "^4.16.2",
     "node-fetch": "^1.7.3"
   }
 }
