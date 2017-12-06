@@ -1,4 +1,12 @@
-(function recommend(){
+const express = require('express')
+const app = express();
+app.get('/', (req, res)=>{
+     recommend();
+});
+app.listen(9000);
+
+
+function recommend(){
     const fs = require('fs');
     const parser =  require('csv-parse/lib/sync');
     
@@ -14,22 +22,22 @@
     // ランクごとのリスト作成
     let rankList = {}
     for(let i=1;i<res.length-1;i++){
-        if(!rankList.hasOwnProperty(res[i][4])){
-            rankList[res[i][4]] = [
+        if(!rankList.hasOwnProperty(res[i][6])){
+            rankList[res[i][6]] = [
                 {
                     'user':res[i][1],
                     'target':res[i][2],
                     'type':res[i][3],
-                    'sim':res[i][5]
+                    'sim':res[i][7]
                 }
             ];
         }
         else{
-            rankList[res[i][4]].push({
+            rankList[res[i][6]].push({
                 'user': res[i][1],
                 'target': res[i][2],
                 'type': res[i][3],
-                'sim': res[i][5]
+                'sim': res[i][7]
             });
         }
     }
@@ -141,9 +149,11 @@
                 return
         }
     })
+    let formWrapper={}
+    let form = {};
     for(let row of recRes){
         for(let key in row){
-            let form ={};
+            form ={};
             // key -> ランキング番号
             form.rank = key;
             let i = 1;
@@ -163,16 +173,18 @@
                 i++;
             
             }
-            fetch('http://127.0.0.1:5000/get_suggestion',{
-                method:"POST",
-                body: JSON.stringify(form)
-            }).then((res)=>{
-                console.log(res)
-            })
-            .catch((err)=>{
-                console.log(err)
-            })
+            formWrapper = Object.assign(formWrapper,form)
         }
+                    console.log(JSON.stringify(form))
+        fetch('http://127.0.0.1:5000/get_suggestion',{
+            method:"POST",
+            body: JSON.stringify(formWrapper)
+        }).then((res)=>{
+            console.log(res)
+        }).catch((err)=>{
+                console.log(err)
+        })
+        console.log(JSON.stringify(formWrapper))
     }
     
-})()
+}
