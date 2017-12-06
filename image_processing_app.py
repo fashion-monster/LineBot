@@ -65,11 +65,11 @@ def similarity():
             if item != "" and user_clothe_type == "Tops" and i < 3:
                 ranking_tops = item
                 simi = calculateColorSimilarity(ranking_tops, user_clothe)
-                writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, year, month, rank, simi])
+                writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, rank, simi, year, month])
             elif item != "" and user_clothe_type == "Bottoms" and i == 3:
                 ranking_bottoms = item
                 simi = calculateColorSimilarity(ranking_bottoms, user_clothe)
-                writer.writerow([user_id, user_clothe, ranking_bottoms, user_clothe_type, year, month, rank, simi])
+                writer.writerow([user_id, user_clothe, ranking_bottoms, user_clothe_type, rank, simi, year, month])
 
     f.close()
     response = make_response()
