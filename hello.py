@@ -73,27 +73,17 @@ def handle_follow(event):
         ]
     )
 
-
-@handler.add(UnfollowEvent)
-def handle_unfollow(event):
-    userid = event.source.user_id
-    with open('follower.csv', 'r') as f:
-        readers = csv.reader(f)
-        readers.remove(userid)
-    with open('follower.csv', 'a') as f:
-        writer = csv.writer(f, lineterminator='\n')
-        for reader in readers:
-            writer.writerow(reader)
-
-
-# 画像IDを返す
-# @handler.add(MessageEvent, message=ImageMessage)
-# def handle_image(event):
-#    line_bot_api.reply_message(
-#        event.reply_token,
-#        TextSendMessage(text=event.message.id)
-#    )
-
+#フォロー解除イベント
+#@handler.add(UnfollowEvent)
+#def handle_unfollow(event):
+#    userid = event.source.user_id
+#    with open('follower.csv', 'r') as f:
+#        readers = csv.reader(f)
+#        readers.remove(userid)
+#    with open('follower.csv', 'a') as f:
+#        writer = csv.writer(f, lineterminator='\n')
+#        for reader in readers:
+#            writer.writerow(reader)
 
 @handler.add(MessageEvent, message=ImageMessage)
 def image_message(event):
@@ -221,9 +211,9 @@ def confirm_message(event):
         line_bot_api.push_message(
                     'U4fce6cc2cc3530ae2f4b7ca0609edd40',[
                     ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
-                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
+                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
                     ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
-                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
+                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
     elif ':Tops' in text:
