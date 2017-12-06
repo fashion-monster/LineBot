@@ -44,7 +44,7 @@ if __name__ == "__main__":
             url = line.strip()
             filename = make_filename(images_dir, url)
 
-            print("%s" % (url))
+            print("%s" % url)
             try:
                 image = download_image(url)
                 save_image(filename, image)

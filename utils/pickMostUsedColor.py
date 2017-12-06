@@ -16,10 +16,10 @@ COLOR_CHART = ["black", "brown", "red", "red", "green", "yellow", "brown", "oran
 
 # rgb(３チャンネル)を数値に変換
 def rgb2bin(red, green, blue):
-    redNo = int(red / 64)
-    greenNo = int(green / 64)
-    blueNo = int(blue / 64)
-    return 16 * redNo + 4 * greenNo + blueNo;
+    red_no = int(red / 64)
+    green_no = int(green / 64)
+    blue_no = int(blue / 64)
+    return 16 * red_no + 4 * green_no + blue_no
 
 
 # 画像から最も使われている(WEARで定義されている)色を３色リストで返す
