@@ -11,7 +11,6 @@
 
     let res = parser(data);
 
-    //console.log(res)
     // ランクごとのリスト作成
     let rankList = {}
     for(let i=1;i<res.length-1;i++){
@@ -86,8 +85,6 @@
             }
         }
     }
-
-    console.log(preResult['85'])
     let result = {};
     for(let row in preResult){
         result[row]={
@@ -130,7 +127,6 @@
             })        
         }
     }
-    console.log(result)
     let recommend=[];
     for(let row in result){
         let obj = {};
@@ -176,7 +172,6 @@
             .catch((err)=>{
                 console.log(err)
             })
-            console.log(JSON.stringify(form));
         }
     }
     
