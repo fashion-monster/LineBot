@@ -59,6 +59,23 @@ def callback():
     return 'OK'
 
 
+@app.route("/get_suggestion", methods=['POST'])
+def get_suggestion():
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
+
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    # handle webhook body
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+
+    return 'OK'
+
+
 @handler.add(FollowEvent)
 def handle_follow(event):
     userid = event.source.user_id
@@ -73,9 +90,10 @@ def handle_follow(event):
         ]
     )
 
-#フォロー解除イベント
-#@handler.add(UnfollowEvent)
-#def handle_unfollow(event):
+
+# フォロー解除イベント
+# @handler.add(UnfollowEvent)
+# def handle_unfollow(event):
 #    userid = event.source.user_id
 #    with open('follower.csv', 'r') as f:
 #        readers = csv.reader(f)
@@ -84,6 +102,7 @@ def handle_follow(event):
 #        writer = csv.writer(f, lineterminator='\n')
 #        for reader in readers:
 #            writer.writerow(reader)
+
 
 @handler.add(MessageEvent, message=ImageMessage)
 def image_message(event):
@@ -149,7 +168,7 @@ def push_message():
     with open('follower.csv', 'r') as f:
         reader = csv.reader(f)  # readerオブジェクトを作成
         header = next(reader)  # 最初の一行をヘッダーとして取得
-        print('header!!!!!!!',header)
+        print('header!!!!!!!', header)
         for _ in reader:
             line_bot_api.push_message(str(header[0]), [
                 TextSendMessage(text="Topsの登録を行います"),
@@ -205,14 +224,14 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif text == 'demo':
-        f_path_tops = 'sumple'
-        f_path_bottoms = 'sumple'
+        f_path_tops = 'sample'
+        f_path_bottoms = 'sample'
         line_bot_api.push_message(
-                    'U4fce6cc2cc3530ae2f4b7ca0609edd40',[
-                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
-                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
-                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
-                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
+            'U4fce6cc2cc3530ae2f4b7ca0609edd40', [
+                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
+                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
+                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
+                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
     elif ':Tops' in text:
@@ -226,7 +245,7 @@ def confirm_message(event):
             TextSendMessage(text='Topsの登録完了です！')
         )
         header = {'content-type': 'application/json'}
-        data = {'user_id':event.source.user_id,'user_clothe':types[0] + '.jpg','user_clothe_type':'Tops'}
+        data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Tops'}
         print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
     elif ':Bottoms' in text:
         types = text.split(':')
