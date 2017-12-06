@@ -31,5 +31,5 @@
 
 プッシュ通知ーファッション提案
 1 パッチ処理ー毎日定時実行
-2 push_message
+2 pushメッセージ
             Tops,Bottoms画像の送信
