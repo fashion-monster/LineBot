@@ -1,18 +1,21 @@
+# coding=utf-8
 import csv
 from utils.calculateColorSimilarity import calculateColorSimilarity
+
 
 # all_pattern_of_Similarity.csv
 
 def readCsv(csvfile):
-	f = open(csvfile, 'r')
+    f = open(csvfile, 'r')
 
-	reader = csv.reader(f)
-	header = next(reader)
+    reader = csv.reader(f)
+    header = next(reader)
 
-	data = [r for r in reader]
+    data = [r for r in reader]
 
-	f.close()
-	return data
+    f.close()
+    return data
+
 
 def writeCsv(csvfile, data_list):
 	f = open(csvfile, 'a')
@@ -50,3 +53,4 @@ for clothe in clothe_data:
 with open('all_pattern_of_Similarity.csv', 'a') as f:
     writer = csv.writer(f, lineterminator='\n') # 改行コード（\n）を指定しておく
     writer.writerows(output_data) # 2次元配列も書き込める
+    

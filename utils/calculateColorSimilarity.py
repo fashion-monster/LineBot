@@ -17,7 +17,7 @@ def decleaseColor(val):
 
 
 # 各画素値を減色する
-def posterizeImage(src_img):
+def posterize_image(src_img):
     output_image = src_img.copy()
 
     height = src_img.shape[0]
@@ -38,15 +38,14 @@ def posterizeImage(src_img):
 
 # ２枚の画像から色の類似度を返す
 def calculateColorSimilarity(img1_path, img2_path):
-    img1 = cv2.imread("tmp/cropped/"+img1_path)
-    img2 = cv2.imread("tmp/cropped/"+img2_path)
+    img1 = cv2.imread("tmp/cropped/" + img1_path)
+    img2 = cv2.imread("tmp/cropped/" + img2_path)
 
-    if img1 is None or  img2 is None:
-    	return 0
+    if img1 is None or img2 is None:
+        return 0
 
-
-    tops1 = posterizeImage(img1)
-    tops2 = posterizeImage(img2)
+    tops1 = posterize_image(img1)
+    tops2 = posterize_image(img2)
 
     hist1 = cv2.calcHist([tops1], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
     hist2 = cv2.calcHist([tops2], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
