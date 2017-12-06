@@ -215,6 +215,17 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text=test_text)
         )
+    elif text == 'demo':
+        f_path_tops = 'sumple'
+        f_path_bottoms = 'sumple'
+        line_bot_api.push_message(
+                    'U4fce6cc2cc3530ae2f4b7ca0609edd40',[
+                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
+                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
+                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
+                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
+            ]
+        )
     elif ':Tops' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
