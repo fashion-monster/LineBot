@@ -1,8 +1,11 @@
 (function recommend(){
     const fs = require('fs');
     const parser =  require('csv-parse/lib/sync');
+    
     const BORDER_SIMILARITY = 0.5;
+    
     const file = './all_pattern_of_Similarity.csv';
+    const fetch = require('node-fetch');
 
     let data = fs.readFileSync(file);
 
@@ -144,17 +147,32 @@
     })
     for(let row of recRes){
         for(let key in row){
+            let form ={};
             // key -> ランキング番号
-            console.log("コーディネート番号"+key+"を紹介します")
+            form.rank = key;
+            let i = 1;
             for(let index in result[key].tops){
-                console.log("画像")
                 // index -> モデル画像ID
-                console.log(index)
-                console.log("に近い画像は")
+                form['topsModel'+i]=index;
                 // resul[key].top[index].user ->ユーザクローゼット
-                console.log("クローゼットURL " + result[key].tops[index].user)
-                console.log("です")
+                form['tops' + i] = result[key].tops[index].user
+                i++;
             }
+            i = 1;
+            for (let index in result[key].bottoms) {
+                // index -> モデル画像ID
+                form['bottomsModel' + i] = index;
+                // resul[key].top[index].user ->ユーザクローゼット
+                form['bottoms' + i] = result[key].bottoms[index].user
+                i++;
+            
+            }
+            fetch('http://127.0.0.1:5000/get_suggestion',{
+                method:"POST",
+                body: JSON.stringify(form)
+            })
+            console.log(JSON.stringify(form));
         }
     }
+    
 })()
