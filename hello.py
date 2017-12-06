@@ -50,7 +50,7 @@ def callback():
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
-    # handle webhook body
+    # handle web-hook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
@@ -67,7 +67,7 @@ def get_suggestion():
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
-    # handle webhook body
+    # handle web-hook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
@@ -224,8 +224,8 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif text == 'demo':
-        f_path_tops = 'sample'
-        f_path_bottoms = 'sample'
+        f_path_tops = '/tmp/cropped/2313745_18_D_215.jpg'
+        f_path_bottoms = '/tmp/cropped/2313745_18_D_215.jpg'
         line_bot_api.push_message(
             'U4fce6cc2cc3530ae2f4b7ca0609edd40', [
                 ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
