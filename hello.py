@@ -219,10 +219,10 @@ def confirm_message(event):
         f_path_bottoms = '/tmp/cropped/2313745_18_D_215.jpg'
         line_bot_api.reply_message(
             event.reply_token, [
-                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
-                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
-                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
-                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
+                ImageSendMessage(original_content_url='https://zoozoo-monster-pbl.work' + f_path_tops,
+                                 preview_image_url='https://zoozoo-monster-pbl.work' + f_path_tops),
+                ImageSendMessage(original_content_url='https://zoozoo-monster-pbl.work' + f_path_bottoms,
+                                 preview_image_url='https://zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
     elif ':Tops' in text:
@@ -248,6 +248,9 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text='Bottomsの登録完了です！')
         )
+        header = {'content-type': 'application/json'}
+        data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Buttoms'}
+        print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
     else:
         line_bot_api.reply_message(
             event.reply_token, [
