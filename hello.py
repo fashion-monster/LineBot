@@ -135,8 +135,7 @@ def handle_location(event):
     lng = str(event.message.longitude)
     w = weather.Weather(lat=lat, lon=lng)
     temp = w.get_temp_max()
-    msg = ('your location is ' + temp)
-
+    msg = ('your location is ' + str(temp))
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=msg))
@@ -208,7 +207,7 @@ def confirm_message(event):
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
     elif text == u'テスト':
-        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
+        requests.post(url='https://127.0.0.1:5000/push_message')
     elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
