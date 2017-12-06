@@ -24,7 +24,7 @@ def writeCsv(csvfile, data_list):
 	f.close()
 
 
-champ_data = readCsv("tools/champ.csv")
+champ_data = readCsv("tools/ranking.csv")
 clothe_data = readCsv("clothe_types.csv")
 user_list = readCsv("follower.csv")
 
@@ -37,11 +37,12 @@ for clothe in clothe_data:
 		user_clothe_type = clothe[2]
 		rank = champ[0]
 		for i,item in enumerate(champ[1:]):
-			if item != "" and user_clothe_type == "Tops" and i < 4:
+
+			if item != "" and user_clothe_type == "Tops" and i<3:
 				ranking_tops = item
 				simi = calculateColorSimilarity(ranking_tops, user_clothe)
 				output_data.append([user_id, user_clothe, ranking_tops, user_clothe_type, rank, simi])
-			elif item != "" and user_clothe_type == "Bottoms" and i > 3:
+			elif item != "" and user_clothe_type == "Bottoms" and i==3:
 				ranking_bottoms = item
 				simi = calculateColorSimilarity(ranking_bottoms, user_clothe)
 				output_data.append([user_id, user_clothe, ranking_bottoms, user_clothe_type, rank, simi])

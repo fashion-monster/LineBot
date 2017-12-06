@@ -48,14 +48,33 @@ def similarity():
     """
     画像名から２枚の画像の類似度を返す
     """
-    image1_name = request.form["image1_name"]
-    image2_name = request.form["image2_name"]
-    simi = calculateColorSimilarity(image1_name, image2_name)
+    f = open('all_pattern_of_Similarity.csv', 'a')
+    writer = csv.writer(f, lineterminator='\n')
+
+    ranking_data = readCsv("tools/ranking.csv")
+    
+    for r in ranking_data:
+        user_id = request.form["user_id"]
+        user_clothe = request.form["user_clothe"]
+        user_clothe_type = request.form["user_clothe_type"]
+        year = r[0]
+        month = r[1]
+        rank = r[2]
+        for i,item in enumerate(r[3:]):
+            if item != "" and user_clothe_type == "Tops" and i<3:
+                ranking_tops = item
+                simi = calculateColorSimilarity(ranking_tops, user_clothe)
+                writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, year, month, rank, simi])
+            elif item != "" and user_clothe_type == "Bottoms" and i==3:
+                ranking_bottoms = item
+                simi = calculateColorSimilarity(ranking_bottoms, user_clothe)
+                writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, year, month, rank, simi])
+
+    f.close()
     response = make_response()
-    response.data = json.dumps({"similarity": simi})
+    response.data = json.dumps({"write_csv": "done"})
     response.headers["Content-Type"] = "application/json"
     return response
-
 
 if __name__ == '__main__':
     app.debug = True
