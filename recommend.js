@@ -170,6 +170,11 @@
             fetch('http://127.0.0.1:5000/get_suggestion',{
                 method:"POST",
                 body: JSON.stringify(form)
+            }).then((res)=>{
+                console.log(res)
+            })
+            .catch((err)=>{
+                console.log(err)
             })
             console.log(JSON.stringify(form));
         }
