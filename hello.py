@@ -227,7 +227,7 @@ def confirm_message(event):
         f_path_tops = '/tmp/cropped/2313745_18_D_215.jpg'
         f_path_bottoms = '/tmp/cropped/2313745_18_D_215.jpg'
         line_bot_api.reply_message(
-            'U4fce6cc2cc3530ae2f4b7ca0609edd40', [
+            event.reply_token, [
                 ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
                                  preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
                 ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
