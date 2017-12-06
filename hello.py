@@ -227,7 +227,10 @@ def confirm_message(event):
         )
         header = {'content-type': 'application/json'}
         data = {'': ''}
-        print(requests.post(url='http://127.0.0.1:9000', headers=header, data=data))
+        r = (requests.get(url='http://127.0.0.1:9000'))
+	print('request.get type is:', type(r))
+	print('request body? is:', r.text)
+	print('response content:', r.content())
     elif ':Tops' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
