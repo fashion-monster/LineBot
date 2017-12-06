@@ -4,7 +4,7 @@ import csv
 
 
 # generate dictionary
-def generate_each_rank_dict_by_user_id(row):
+def generate_each_rank_dict_by_user_id(row, user_id, sim_dict):
     """
     {
         '1':[
@@ -90,32 +90,37 @@ def get_best_clothes_by_rank(rank_list, self_rank):
     return {self_rank: rank}
 
 
-with open('all_pattern_of_Similarity.csv', 'r') as f:
-    reader = csv.reader(f)
-    header = next(reader)
+def main():
+    with open('all_pattern_of_Similarity.csv', 'r') as f:
+        reader = csv.reader(f)
+        header = next(reader)
 
-    user_id = 'U4fce6cc2cc3530ae2f4b7ca0609edd40'
-    sim_dict = {}
-    most_sim = []
+        user_id = 'U4fce6cc2cc3530ae2f4b7ca0609edd40'
+        sim_dict = {}
+        most_sim = []
 
-    for row in reader:
-        generate_each_rank_dict_by_user_id(row)
+        for row in reader:
+            generate_each_rank_dict_by_user_id(row)
 
-    for row in sim_dict:
-        most_sim.append(get_best_clothes_by_rank(sim_dict[row], row))
+        for row in sim_dict:
+            most_sim.append(get_best_clothes_by_rank(sim_dict[row], row))
 
-    similarity_ranking = {}
-    most_sim_recommend_key = []
-    RECOMMEND_MAX = 5
-    for k in most_sim:
-        for row in k:
-            similarity_ranking[str(row)] = k[str(row)]['similarity']
-    for k, v in sorted(similarity_ranking.items(), key=lambda x: x[1], reverse=True):
-        most_sim_recommend_key.append(k)
-    print(most_sim_recommend_key)
-    for k in most_sim:
-        for index in k:
-            for i in range(0, RECOMMEND_MAX):
-                if index == most_sim_recommend_key[i]:
-                    # kに推薦したいオブジェクトが入ってるのでBot側で頑張って
-                    pprint(k)
+        similarity_ranking = {}
+        most_sim_recommend_key = []
+        RECOMMEND_MAX = 5
+        for k in most_sim:
+            for row in k:
+                similarity_ranking[str(row)] = k[str(row)]['similarity']
+        for k, v in sorted(similarity_ranking.items(), key=lambda x: x[1], reverse=True):
+            most_sim_recommend_key.append(k)
+        print(most_sim_recommend_key)
+        for k in most_sim:
+            for index in k:
+                for i in range(0, RECOMMEND_MAX):
+                    if index == most_sim_recommend_key[i]:
+                        # kに推薦したいオブジェクトが入ってるのでBot側で頑張って
+                        return k
+
+
+if __name__ == '__main__':
+    main()

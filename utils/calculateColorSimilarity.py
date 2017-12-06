@@ -38,12 +38,11 @@ def posterizeImage(src_img):
 
 # ２枚の画像から色の類似度を返す
 def calculateColorSimilarity(img1_path, img2_path):
-    img1 = cv2.imread("tmp/cropped/"+img1_path)
-    img2 = cv2.imread("tmp/cropped/"+img2_path)
+    img1 = cv2.imread("tmp/cropped/" + img1_path)
+    img2 = cv2.imread("tmp/cropped/" + img2_path)
 
-    if img1 is None or  img2 is None:
-    	return 0
-
+    if img1 is None or img2 is None:
+        return 0
 
     tops1 = posterizeImage(img1)
     tops2 = posterizeImage(img2)
