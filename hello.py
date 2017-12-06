@@ -216,6 +216,9 @@ def confirm_message(event):
                                      preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
+        header = {'content-type': 'application/json'}
+        data = {'': ''}
+        print(requests.post(url='http://127.0.0.1:9000', headers=header, data=data))
     elif ':Tops' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
