@@ -225,6 +225,9 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text='Topsの登録完了です！')
         )
+        header = {'content-type': 'application/json'}
+        data = {'user_id':event.source.user_id,'user_clothe':types[0] + '.jpg','user_clothe_type':'Tops'}
+        print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
     elif ':Bottoms' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
