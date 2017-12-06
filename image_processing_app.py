@@ -4,6 +4,7 @@ from utils.calculateColorSimilarity import calculateColorSimilarity
 from utils.pickMostUsedColor import pickMostUsedColor
 from utils.imageResize import resizeImage
 import json
+import csv
 
 app = Flask(__name__)
 
@@ -75,6 +76,17 @@ def similarity():
     response.data = json.dumps({"write_csv": "done"})
     response.headers["Content-Type"] = "application/json"
     return response
+
+def readCsv(csvfile):
+    f = open(csvfile, 'r')
+
+    reader = csv.reader(f)
+    header = next(reader)
+
+    data = [r for r in reader]
+
+    f.close()
+    return data
 
 if __name__ == '__main__':
     app.debug = True
