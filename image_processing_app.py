@@ -53,7 +53,7 @@ def similarity():
     writer = csv.writer(f, lineterminator='\n')
 
     ranking_data = readCsv("tools/ranking.csv")
-    
+
     for r in ranking_data:
         user_id = request.form["user_id"]
         user_clothe = request.form["user_clothe"]
@@ -61,21 +61,22 @@ def similarity():
         year = r[0]
         month = r[1]
         rank = r[2]
-        for i,item in enumerate(r[3:]):
-            if item != "" and user_clothe_type == "Tops" and i<3:
+        for i, item in enumerate(r[3:]):
+            if item != "" and user_clothe_type == "Tops" and i < 3:
                 ranking_tops = item
                 simi = calculateColorSimilarity(ranking_tops, user_clothe)
                 writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, year, month, rank, simi])
-            elif item != "" and user_clothe_type == "Bottoms" and i==3:
+            elif item != "" and user_clothe_type == "Bottoms" and i == 3:
                 ranking_bottoms = item
                 simi = calculateColorSimilarity(ranking_bottoms, user_clothe)
-                writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, year, month, rank, simi])
+                writer.writerow([user_id, user_clothe, ranking_bottoms, user_clothe_type, year, month, rank, simi])
 
     f.close()
     response = make_response()
     response.data = json.dumps({"write_csv": "done"})
     response.headers["Content-Type"] = "application/json"
     return response
+
 
 def readCsv(csvfile):
     f = open(csvfile, 'r')
@@ -87,6 +88,7 @@ def readCsv(csvfile):
 
     f.close()
     return data
+
 
 if __name__ == '__main__':
     app.debug = True
