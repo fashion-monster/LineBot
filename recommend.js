@@ -1,12 +1,12 @@
-// const express = require('express')
-// const app = express();
-// app.get('/', (req, res)=>{ 
-//     res.setHeader('Content-Type', 'application/json');
-//     let response = recommend()
-//     console.log(response)
-// res.json(response)
-// });
-// app.listen(9000);
+const express = require('express')
+const app = express();
+app.get('/', (req, res)=>{ 
+    res.setHeader('Content-Type', 'application/json');
+    let response = recommend()
+    console.log(response)
+res.json(response)
+});
+app.listen(9000);
 
 
 function recommend(){
@@ -188,5 +188,3 @@ function recommend(){
     jsonResult.recommend = formWrapper
     return JSON.stringify(jsonResult)
 }
-
-console.log(recommend())
