@@ -1,12 +1,12 @@
-const express = require('express')
-const app = express();
-app.get('/', (req, res)=>{ 
-    res.setHeader('Content-Type', 'application/json');
-    let response = recommend()
-    console.log(response)
-res.json(response)
-});
-app.listen(9000);
+// const express = require('express')
+// const app = express();
+// app.get('/', (req, res)=>{ 
+//     res.setHeader('Content-Type', 'application/json');
+//     let response = recommend()
+//     console.log(response)
+// res.json(response)
+// });
+// app.listen(9000);
 
 
 function recommend(){
@@ -181,9 +181,12 @@ function recommend(){
                 form['bottoms' + i] = result[key].bottoms[index].user
                 i++;
             }
-            formWrapper.push(form)
+            if (form.hasOwnProperty('tops1') && form.hasOwnProperty('bottoms1'))
+                formWrapper.push(form)
         }
     }    
     jsonResult.recommend = formWrapper
     return JSON.stringify(jsonResult)
 }
+
+console.log(recommend())
