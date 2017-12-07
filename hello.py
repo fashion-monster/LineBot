@@ -300,6 +300,7 @@ def confirm_message(event):
         # 白田APIに投げると
         header = {'content-type': 'application/json'}
         data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Tops'}
+        data = json.dumps(data)
         print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))  # 結果が出てくる
     elif ':Bottoms' in text:
         types = text.split(':')
