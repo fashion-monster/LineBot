@@ -272,8 +272,8 @@ def confirm_message(event):
         r = (requests.get(url='http://127.0.0.1:9000'))
         recommend = json.loads(str(r.text))
         recommend = json.loads(str(recommend))
-        recommend_t = '/tmp/cropped/' + recommend["recommend"][i][u"tops1"]
-        recommend_b = '/tmp/cropped/' + recommend["recommend"][i][u"bottoms1"]
+        recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
+        recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"bottoms1"]
 
         line_bot_api.reply_message(
             event.reply_token, [
@@ -314,7 +314,7 @@ def confirm_message(event):
         header = {'content-type': 'application/json'}
         data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Buttoms'}
         print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
-    elif 'クリア' in text:
+    elif u'クリア' in text:
         with open('clothe_types.csv', 'wt') as f:
             print('user,image_name,type', f)
         with open('all_pattern_of_Similarity2.csv', 'wt'):
