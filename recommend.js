@@ -183,7 +183,7 @@ function recommend(){
                 i++;
             }
             jsonResult = {
-                "recommend":{...jsonResult["recommend"],form}
+                "recommend":Object.assign(jsonResult["recommend"],form)
             }
         }
     }    
