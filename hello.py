@@ -2,6 +2,7 @@
 import os
 import requests
 import csv
+import json
 import utils.weather as weather
 
 from flask import Flask, request, abort
@@ -79,6 +80,8 @@ def get_suggestion():
     """
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
+    body = json.loads(body)
+    print(body)
 
     return 'OK'
 
@@ -270,22 +273,21 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif text == 'demo':
-        f_path_tops = '/tmp/cropped/2313745_18_D_215.jpg'
-        f_path_bottoms = '/tmp/cropped/2313745_18_D_215.jpg'
+        r = (requests.get(url='http://127.0.0.1:9000'))
+        recommend = json.loads(str(r.text))
+        recommend = json.loads(str(recommend))
+        recommend_t = '/tmp/cropped/' + recommend["recommend"][i][u"tops1"]
+        recommend_b = '/tmp/cropped/' + recommend["recommend"][i][u"bottoms1"]
+
         line_bot_api.reply_message(
             event.reply_token, [
-                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + f_path_tops,
-                                 preview_image_url='https://zoozoo-monster.work' + f_path_tops),
-                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + f_path_bottoms,
-                                 preview_image_url='https://zoozoo-monster.work' + f_path_bottoms)
+                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_t,
+                                 preview_image_url='https://zoozoo-monster.work' + recommend_t),
+                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_b,
+                                 preview_image_url='https://zoozoo-monster.work' + recommend_b)
             ]
         )
-        header = {'content-type': 'application/json'}
-        data = {'': ''}
-        r = (requests.get(url='http://127.0.0.1:9000'))
-        print('request.get type is:', type(r))
-        print('request body? is:', r.text)
-        print('response content:', r.content())
+
     elif ':Tops' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
