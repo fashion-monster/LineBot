@@ -29,7 +29,7 @@ handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
 @app.route("/")
 def route_dir():
-    """access to 'https://www.zoozoo-monster.work/'
+    """assessable to 'https://www.zoozoo-monster.work/'
     Returns:
         html : html source code
 
@@ -164,7 +164,7 @@ def image_message(event):
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
-    """get location and get 
+    """get location and get
 
     Args:
         event:
