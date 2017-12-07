@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express();
 app.get('/', (req, res)=>{ 
-console.log("call")
-    recommend();
-res.send(200)
+    res.setHeader('Content-Type', 'application/json');
+    let response = recommend()
+    console.log(response)
+    res.json(response)
 });
 app.listen(9000);
 
@@ -24,22 +25,22 @@ function recommend(){
     // ランクごとのリスト作成
     let rankList = {}
     for(let i=1;i<res.length-1;i++){
-        if(!rankList.hasOwnProperty(res[i][6])){
-            rankList[res[i][6]] = [
+        if(!rankList.hasOwnProperty(res[i][4])){
+            rankList[res[i][4]] = [
                 {
                     'user':res[i][1],
                     'target':res[i][2],
                     'type':res[i][3],
-                    'sim':res[i][7]
+                    'sim':res[i][5]
                 }
             ];
         }
         else{
-            rankList[res[i][6]].push({
+            rankList[res[i][4]].push({
                 'user': res[i][1],
                 'target': res[i][2],
                 'type': res[i][3],
-                'sim': res[i][7]
+                'sim': res[i][5]
             });
         }
     }
@@ -120,6 +121,8 @@ function recommend(){
                 };
                 result[row].sim = result[row].sim * maxSim
             }) 
+        }
+        for (let val in preResult[row].bottoms) {
             Object.keys(preResult[row].bottoms).map((key) => {
                 let maxSimClName = {};
                 let maxSim = Math.max(...preResult[row].bottoms[key].map((o) => {
@@ -151,10 +154,12 @@ function recommend(){
                 return
         }
     })
-    let formWrapper={}
+    let formWrapper=[]
     let form = {};
+    let jsonResult = {}
     for(let row of recRes){
         for(let key in row){
+            
             form ={};
             // key -> ランキング番号
             form.rank = key;
@@ -173,20 +178,9 @@ function recommend(){
                 // resul[key].top[index].user ->ユーザクローゼット
                 form['bottoms' + i] = result[key].bottoms[index].user
                 i++;
-            
             }
-            formWrapper = Object.assign(formWrapper,form)
+            formWrapper.push(form)
         }
-                    console.log(JSON.stringify(form))
-        fetch('http://127.0.0.1:5000/get_suggestion',{
-            method:"POST",
-            body: JSON.stringify(formWrapper)
-        }).then((res)=>{
-            console.log(res)
-        }).catch((err)=>{
-                console.log(err)
-        })
-        console.log(JSON.stringify(formWrapper))
-    }
-    
+    }    
+    return JSON.stringify(formWrapper)
 }
