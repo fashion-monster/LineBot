@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express();
 app.get('/', (req, res)=>{ 
-console.log("call")
-    recommend();
-res.send(200)
+res.setHeader('Content-Type', 'application/json');
+let response = recommend()
+console.log(response)
+res.json(response)
 });
 app.listen(9000);
 
@@ -14,7 +15,7 @@ function recommend(){
     
     const BORDER_SIMILARITY = 0.5;
     
-    const file = './all_pattern_of_Similarity2.csv';
+    const file = './all_pattern_of_Similarity.csv';
     const fetch = require('node-fetch');
 
     let data = fs.readFileSync(file);
@@ -176,17 +177,16 @@ function recommend(){
             
             }
             formWrapper = Object.assign(formWrapper,form)
-        }
+	}
                     console.log(JSON.stringify(form))
-        fetch('http://127.0.0.1:5000/get_suggestion',{
-            method:"POST",
-            body: JSON.stringify(formWrapper)
-        }).then((res)=>{
-            console.log(res)
-        }).catch((err)=>{
-                console.log(err)
-        })
-        console.log(JSON.stringify(formWrapper))
-    }
-    
+ //      fetch('http://127.0.0.1:5000/get_suggestion',{
+ //          method:"POST",
+ //         body: JSON.stringify(formWrapper)
+ //     }).then((res)=>{
+ //        console.log(res)
+ //      }).catch((err)=>{
+ //               console.log(err)
+ // 	})
+       	return JSON.stringify(formWrapper)
+	}    
 }
