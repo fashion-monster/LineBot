@@ -156,7 +156,10 @@ function recommend(){
     })
     let formWrapper=[]
     let form = {};
-    let jsonResult = {}
+    let jsonResult = {
+        "recommend":{}
+    }
+    
     for(let row of recRes){
         for(let key in row){
             
@@ -179,8 +182,10 @@ function recommend(){
                 form['bottoms' + i] = result[key].bottoms[index].user
                 i++;
             }
-            formWrapper.push(form)
+            jsonResult = {
+                "recommend":{...jsonResult["recommend"],form}
+            }
         }
     }    
-    return JSON.stringify(formWrapper)
+    return JSON.stringify(jsonResult)
 }
