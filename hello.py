@@ -139,8 +139,6 @@ def image_message(event):
                 fd.write(chunk)
         print(f_path)
         header = {'content-type': 'application/json'}
-        data = "{'image_path':'" + f_path + "'}"
-        print(data)
         print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
         line_bot_api.reply_message(
             event.reply_token, [
@@ -287,18 +285,22 @@ def confirm_message(event):
         )
 
     elif ':Tops' in text:
+        # CSVに書く作業
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
             writer.writerow(type_list)
+        # Userに返事
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Topsの登録完了です！')
         )
+
+        # 白田APIに投げると
         header = {'content-type': 'application/json'}
         data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Tops'}
-        print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
+        print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))  # 結果が出てくる
     elif ':Bottoms' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
@@ -330,21 +332,6 @@ def confirm_message(event):
                 TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
         )
-
-
-def similarity_request(image1_name, image2_name):
-    """
-    Args:
-        image1_name 画像1の名前(パスではないです) :string
-        image2_name 画像2の名前(パスではないです) :string
-
-    Returns:
-        類似度の値 :string
-        ex.0.9960923888352317
-    """
-    response = requests.post('http://127.0.0.1:8050/similarity',
-                             data={"image1_name": image1_name, "image2_name": image2_name})
-    return response.text
 
 
 def pick_request(image_name):

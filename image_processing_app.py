@@ -49,7 +49,7 @@ def similarity():
     """
     画像名から２枚の画像の類似度を返す
     """
-    f = open('all_pattern_of_Similarity.csv2', 'a')
+    f = open('all_pattern_of_Similarity2.csv', 'a')
     writer = csv.writer(f, lineterminator='\n')
 
     ranking_data = readCsv("tools/ranking.csv")
