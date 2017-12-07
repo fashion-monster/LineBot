@@ -29,6 +29,11 @@ handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
 @app.route("/")
 def route_dir():
+    """access to 'https://www.zoozoo-monster.work/'
+    Returns:
+        html : html source code
+
+    """
     html = """<head> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap
     .min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
     crossorigin="anonymous"> <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -43,6 +48,10 @@ def route_dir():
 
 @app.route("/callback", methods=['POST'])
 def callback():
+    """for LINE certificate.
+    Returns:
+        http status?
+    """
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
@@ -61,6 +70,13 @@ def callback():
 
 @app.route("/get_suggestion", methods=['POST'])
 def get_suggestion():
+    """get suggestion from sudo server, POST cloth combination to user.
+
+    TODO: adapt to multi user
+
+    Returns:
+        http status?
+    """
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
@@ -69,10 +85,18 @@ def get_suggestion():
 
 @handler.add(FollowEvent)
 def handle_follow(event):
-    userid = event.source.user_id
+    """when follow event occurred, write user id to follower.csv and reply
+
+    Args:
+        event:
+
+    Returns:
+
+    """
+    user_id = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow([str(userid)])
+        writer.writerow([str(user_id)])
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -97,7 +121,14 @@ def handle_follow(event):
 
 @handler.add(MessageEvent, message=ImageMessage)
 def image_message(event):
-    """repeat gotten image"""
+    """cropping, writing image_id to csv, sending message
+
+    Args:
+        event:
+
+    Returns:
+
+    """
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
@@ -124,6 +155,8 @@ def image_message(event):
     #            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
     #                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
     #        )
+    except IOError:
+        raise IOError
     except:
         import traceback
         traceback.print_exc()
@@ -131,6 +164,14 @@ def image_message(event):
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
+    """get location and get 
+
+    Args:
+        event:
+
+    Returns:
+
+    """
     lat = str(event.message.latitude)
     lng = str(event.message.longitude)
     w = weather.Weather(lat=lat, lon=lng)
@@ -156,6 +197,11 @@ def handle_location(event):
 
 @app.route('/push_message', methods=['POST'])
 def push_message():
+    """
+
+    Returns:
+
+    """
     with open('follower.csv', 'r') as f:
         reader = csv.reader(f)  # readerオブジェクトを作成
         header = next(reader)  # 最初の一行をヘッダーとして取得
@@ -172,6 +218,15 @@ def push_message():
 
 @handler.add(MessageEvent, message=TextMessage)
 def confirm_message(event):
+    """
+
+
+    Args:
+        event:
+
+    Returns:
+
+    """
     text = event.message.text
     # textがconfirmなら2択表示
     if text == 'confirm':
@@ -228,9 +283,9 @@ def confirm_message(event):
         header = {'content-type': 'application/json'}
         data = {'': ''}
         r = (requests.get(url='http://127.0.0.1:9000'))
-	print('request.get type is:', type(r))
-	print('request body? is:', r.text)
-	print('response content:', r.content())
+        print('request.get type is:', type(r))
+        print('request body? is:', r.text)
+        print('response content:', r.content())
     elif ':Tops' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
