@@ -4,7 +4,7 @@ app.get('/', (req, res)=>{
     res.setHeader('Content-Type', 'application/json');
     let response = recommend()
     console.log(response)
-    res.json(response)
+res.json(response)
 });
 app.listen(9000);
 
@@ -157,9 +157,8 @@ function recommend(){
     let formWrapper=[]
     let form = {};
     let jsonResult = {
-        "recommend":{}
+        "recommend":[]
     }
-    
     for(let row of recRes){
         for(let key in row){
             
@@ -182,10 +181,9 @@ function recommend(){
                 form['bottoms' + i] = result[key].bottoms[index].user
                 i++;
             }
-            jsonResult = {
-                "recommend":Object.assign(jsonResult["recommend"],form)
-            }
+            formWrapper.push(form)
         }
     }    
+    jsonResult.recommend = formWrapper
     return JSON.stringify(jsonResult)
 }
