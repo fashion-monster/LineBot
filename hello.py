@@ -80,8 +80,6 @@ def get_suggestion():
     """
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
-    body = json.loads(body)
-    print(body)
 
     return 'OK'
 
@@ -314,6 +312,16 @@ def confirm_message(event):
         header = {'content-type': 'application/json'}
         data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Buttoms'}
         print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
+    elif 'クリア' in text:
+        with open('clothe_types.csv', 'wt') as f:
+            print('user,image_name,type', f)
+        with open('all_pattern_of_Similarity2.csv', 'wt'):
+            print('user_id,user_clothe,ranking_clothe,clothe_type,rank,similarity', f)
+        line_bot_api.reply_message(
+            event.reply_token, [
+                TextSendMessage(text='クリアしました'),
+            ]
+        )
     else:
         line_bot_api.reply_message(
             event.reply_token, [

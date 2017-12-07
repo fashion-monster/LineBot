@@ -5,8 +5,8 @@ from utils.calculateColorSimilarity import calculateColorSimilarity
 
 # all_pattern_of_Similarity.csv
 
-def readCsv(csvfile):
-    f = open(csvfile, 'r')
+def read_csv(csv_file):
+    f = open(csv_file, 'r')
 
     reader = csv.reader(f)
     header = next(reader)
@@ -17,8 +17,8 @@ def readCsv(csvfile):
     return data
 
 
-def writeCsv(csvfile, data_list):
-    f = open(csvfile, 'a')
+def write_csv(csv_file, data_list):
+    f = open(csv_file, 'a')
 
     writer = csv.writer(f, lineterminator='\n')
     for list in data_list:
@@ -27,9 +27,9 @@ def writeCsv(csvfile, data_list):
     f.close()
 
 
-ranking_data = readCsv("tools/ranking.csv")
-clothe_data = readCsv("clothe_types.csv")
-user_list = readCsv("follower.csv")
+ranking_data = read_csv("tools/ranking.csv")
+clothe_data = read_csv("clothe_types.csv")
+user_list = read_csv("follower.csv")
 
 output_data = []
 
@@ -41,7 +41,7 @@ for clothe in clothe_data:
         year = r[0]
         month = r[1]
         rank = r[2]
-        for i, item in enumerate(champ[1:]):
+        for i, item in enumerate(r[1:]):
 
             if item != "" and user_clothe_type == "Tops" and i < 3:
                 ranking_tops = item
