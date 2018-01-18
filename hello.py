@@ -102,7 +102,7 @@ def handle_follow(event):
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
-            TextSendMessage(text="初めに「チュートリアル」と入力してください!")
+            TextSendMessage(text="リッチメニューから操作をお願いします")
         ]
     )
 
@@ -180,7 +180,7 @@ def handle_location(event):
         event.reply_token,
         TextSendMessage(text=msg))
 
-@app.route('/push_message', methods=['POST'])
+@app.route('/push_message_duplicate', methods=['POST'])
 def push_message():
     """
 
@@ -200,6 +200,23 @@ def push_message():
 
     return "OK!"
 
+@app.route('/push_state', methods=['POST'])
+def received_state():
+    """
+
+    Returns:
+
+    """
+    #仮の受け取る変数
+    user = user_id;
+    text_state = text_text
+    erroe = error_text
+
+    line_bot_api.push_message(user,
+        TextSendMessage(text=text_state)
+        )
+
+    return "OK!"
 
 @handler.add(MessageEvent, message=TextMessage)
 def confirm_message(event):
@@ -213,6 +230,8 @@ def confirm_message(event):
 
     """
     text = event.message.text
+    global state
+
     # textがconfirmなら2択表示
     if text == 'confirm':
         confirm_template = ConfirmTemplate(text='Do it?', actions=[
@@ -242,12 +261,13 @@ def confirm_message(event):
     elif text == u'チュートリアル':
         line_bot_api.reply_message(
             event.reply_token, [
-                TextSendMessage(text="Topsの登録を行います"),
-                TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
-                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
+                TextSendMessage(text="おすすめは本日の服装の提案"),
+                TextSendMessage(text="トップス登録はトップスボタンを押し画像送信"),
+                TextSendMessage(text="ボトムス登録はトムスボタンを押し画像送信"),
+                TextSendMessage(text="あなたのMyクローゼットに服が登録されます")
             ])
     elif text == u'テスト':
-        requests.post(url='https://127.0.0.1:5000/push_message')
+        requests.post(url='https://127.0.0.1:5000/push_message_duplicate')
     elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
@@ -265,6 +285,16 @@ def confirm_message(event):
                                      preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
+
+    elif 'Tops'　or 'Bottoms' in text:
+        #後で処理を追加します
+        #img_path, clothe_type, sender_user_id仮の変数
+        #userid!=
+        #img_path is None
+        #else
+        if state.wear_type is None and state.img_path is None:
+        elif 'Tops'　or 'Bottoms' in state.wear_type and state.img_path is not None:
+        elif 'Tops'　or 'Bottoms' in state.wear_type and state.img_path is None:
 
     elif ':Tops' in text:
         # CSVに書く作業
@@ -312,7 +342,7 @@ def confirm_message(event):
             event.reply_token, [
                 TextSendMessage(text='ご利用ありがとうございます'),
                 TextSendMessage(text='このbotはあなたが登録した服の中から明日の服装を提案します'),
-                TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
+                TextSendMessage(text='服の登録はリッチメニューより行えます')
             ]
         )
 
