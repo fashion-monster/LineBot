@@ -2,6 +2,7 @@
 import os
 import requests
 import csv
+import json
 import utils.weather as weather
 
 from flask import Flask, request, abort
@@ -29,6 +30,11 @@ handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
 @app.route("/")
 def route_dir():
+    """assessable to 'https://www.zoozoo-monster.work/'
+    Returns:
+        html : html source code
+
+    """
     html = """<head> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap
     .min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
     crossorigin="anonymous"> <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -43,6 +49,10 @@ def route_dir():
 
 @app.route("/callback", methods=['POST'])
 def callback():
+    """for LINE certificate.
+    Returns:
+        http status?
+    """
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
@@ -50,7 +60,7 @@ def callback():
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
-    # handle webhook body
+    # handle web-hook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
@@ -59,12 +69,35 @@ def callback():
     return 'OK'
 
 
+@app.route("/get_suggestion", methods=['POST'])
+def get_suggestion():
+    """get suggestion from sudo server, POST cloth combination to user.
+
+    TODO: adapt to multi user
+
+    Returns:
+        http status?
+    """
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    return 'OK'
+
+
 @handler.add(FollowEvent)
 def handle_follow(event):
-    userid = event.source.user_id
+    """when follow event occurred, write user id to follower.csv and reply
+
+    Args:
+        event:
+
+    Returns:
+
+    """
+    user_id = event.source.user_id
     with open('follower.csv', 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow([str(userid)])
+        writer.writerow([str(user_id)])
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
@@ -73,9 +106,10 @@ def handle_follow(event):
         ]
     )
 
-#フォロー解除イベント
-#@handler.add(UnfollowEvent)
-#def handle_unfollow(event):
+
+# フォロー解除イベント
+# @handler.add(UnfollowEvent)
+# def handle_unfollow(event):
 #    userid = event.source.user_id
 #    with open('follower.csv', 'r') as f:
 #        readers = csv.reader(f)
@@ -85,9 +119,17 @@ def handle_follow(event):
 #        for reader in readers:
 #            writer.writerow(reader)
 
+
 @handler.add(MessageEvent, message=ImageMessage)
 def image_message(event):
-    """repeat gotten image"""
+    """cropping, writing image_id to csv, sending message
+
+    Args:
+        event:
+
+    Returns:
+
+    """
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
@@ -97,8 +139,6 @@ def image_message(event):
                 fd.write(chunk)
         print(f_path)
         header = {'content-type': 'application/json'}
-        data = "{'image_path':'" + f_path + "'}"
-        print(data)
         print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
         line_bot_api.reply_message(
             event.reply_token, [
@@ -114,6 +154,8 @@ def image_message(event):
     #            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
     #                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
     #        )
+    except IOError:
+        raise IOError
     except:
         import traceback
         traceback.print_exc()
@@ -121,23 +163,35 @@ def image_message(event):
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
+    """get location and get
+
+    Args:
+        event:
+
+    Returns:
+
+    """
     lat = str(event.message.latitude)
     lng = str(event.message.longitude)
     w = weather.Weather(lat=lat, lon=lng)
     temp = w.get_temp_max()
-    msg = ('your location is ' + temp)
-
+    msg = ('your location is ' + str(temp))
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=msg))
 
 @app.route('/push_message', methods=['POST'])
 def push_message():
+    """
+
+    Returns:
+
+    """
     with open('follower.csv', 'r') as f:
         reader = csv.reader(f)  # readerオブジェクトを作成
         header = next(reader)  # 最初の一行をヘッダーとして取得
-        print('header!!!!!!!',header)
-        for row in reader:
+        print('header!!!!!!!', header)
+        for _ in reader:
             line_bot_api.push_message(str(header[0]), [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
@@ -149,6 +203,15 @@ def push_message():
 
 @handler.add(MessageEvent, message=TextMessage)
 def confirm_message(event):
+    """
+
+
+    Args:
+        event:
+
+    Returns:
+
+    """
     text = event.message.text
     # textがconfirmなら2択表示
     if text == 'confirm':
@@ -184,14 +247,14 @@ def confirm_message(event):
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
     elif text == u'テスト':
-        line_bot_api.push_message('U68c89b1ff06c2a997c249340fae7040b', TextSendMessage(text='message1'))
+        requests.post(url='https://127.0.0.1:5000/push_message')
     elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=test_text)
         )
-    elif text == u'おすすめ教えて':
+    elif text == uwritecsv'おすすめ教えて':
         f_path_tops = 'sumple'
         f_path_bottoms = 'sumple'
         line_bot_api.push_message(
@@ -202,22 +265,25 @@ def confirm_message(event):
                                      preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
-        header = {'content-type': 'application/json'}
-        data = {'': ''}
-        print(requests.post(url='http://127.0.0.1:9000', headers=header, data=data))
+
     elif ':Tops' in text:
+        # CSVに書く作業
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
         with open('clothe_types.csv', 'a') as f:
             writer = csv.writer(f, lineterminator='\n')
             writer.writerow(type_list)
+        # Userに返事
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='Topsの登録完了です！')
         )
+
+        # 白田APIに投げると
         header = {'content-type': 'application/json'}
-        data = {'user_id':event.source.user_id,'user_clothe':types[0] + '.jpg','user_clothe_type':'Tops'}
-        print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
+        data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Tops'}
+        data = json.dumps(data)
+        print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))  # 結果が出てくる
     elif ':Bottoms' in text:
         types = text.split(':')
         type_list = [str(event.source.user_id), str(types[0] + '.jpg'), str(types[1])]
@@ -231,6 +297,16 @@ def confirm_message(event):
         header = {'content-type': 'application/json'}
         data = {'user_id': event.source.user_id, 'user_clothe': types[0] + '.jpg', 'user_clothe_type': 'Buttoms'}
         print(requests.post(url='http://127.0.0.1:8050/similarity', headers=header, data=data))
+    elif u'クリア' in text:
+        with open('clothe_types.csv', 'wt') as f:
+            print('user,image_name,type', f)
+        with open('all_pattern_of_Similarity2.csv', 'wt'):
+            print('user_id,user_clothe,ranking_clothe,clothe_type,rank,similarity', f)
+        line_bot_api.reply_message(
+            event.reply_token, [
+                TextSendMessage(text='クリアしました'),
+            ]
+        )
     else:
         line_bot_api.reply_message(
             event.reply_token, [
@@ -239,21 +315,6 @@ def confirm_message(event):
                 TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
             ]
         )
-
-
-def similarity_request(image1_name, image2_name):
-    """
-    Args:
-        image1_name 画像1の名前(パスではないです) :string
-        image2_name 画像2の名前(パスではないです) :string
-
-    Returns:
-        類似度の値 :string
-        ex.0.9960923888352317
-    """
-    response = requests.post('http://127.0.0.1:8050/similarity',
-                             data={"image1_name": image1_name, "image2_name": image2_name})
-    return response.text
 
 
 def pick_request(image_name):
