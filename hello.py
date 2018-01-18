@@ -180,20 +180,6 @@ def handle_location(event):
         event.reply_token,
         TextSendMessage(text=msg))
 
-
-# 画像保存　コメントアウト中
-# @handler.add(MessageEvent, message=ImageMessage)
-# def save(event):
-#    MessageId = str(event.message.id)
-#    message_content = line_bot_api.get_message_content(MessageId)
-#    with open(file_path, 'wb') as fd:
-#        for chunk in message_content.iter_content():
-#            fd.write(chunk)
-#            line_bot_api.reply_message(
-#                event.reply_token,
-#                TextSendMessage(text="保存")
-#            )
-
 @app.route('/push_message', methods=['POST'])
 def push_message():
     """
@@ -268,19 +254,15 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text=test_text)
         )
-    elif text == 'demo':
-        r = (requests.get(url='http://127.0.0.1:9000'))
-        recommend = json.loads(str(r.text))
-        recommend = json.loads(str(recommend))
-        recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
-        recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"bottoms1"]
-
-        line_bot_api.reply_message(
-            event.reply_token, [
-                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_t,
-                                 preview_image_url='https://zoozoo-monster.work' + recommend_t),
-                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_b,
-                                 preview_image_url='https://zoozoo-monster.work' + recommend_b)
+    elif text == uwritecsv'おすすめ教えて':
+        f_path_tops = 'sumple'
+        f_path_bottoms = 'sumple'
+        line_bot_api.push_message(
+                    'U4fce6cc2cc3530ae2f4b7ca0609edd40',[
+                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
+                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
+                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
+                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
 
