@@ -254,7 +254,7 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text=test_text)
         )
-    elif text == uwritecsv'おすすめ教えて':
+    elif text == u'おすすめ教えて':
         f_path_tops = 'sumple'
         f_path_bottoms = 'sumple'
         line_bot_api.push_message(
