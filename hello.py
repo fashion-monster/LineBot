@@ -131,20 +131,6 @@ def handle_location(event):
         event.reply_token,
         TextSendMessage(text=msg))
 
-
-# 画像保存　コメントアウト中
-# @handler.add(MessageEvent, message=ImageMessage)
-# def save(event):
-#    MessageId = str(event.message.id)
-#    message_content = line_bot_api.get_message_content(MessageId)
-#    with open(file_path, 'wb') as fd:
-#        for chunk in message_content.iter_content():
-#            fd.write(chunk)
-#            line_bot_api.reply_message(
-#                event.reply_token,
-#                TextSendMessage(text="保存")
-#            )
-
 @app.route('/push_message', methods=['POST'])
 def push_message():
     with open('follower.csv', 'r') as f:
@@ -205,7 +191,7 @@ def confirm_message(event):
             event.reply_token,
             TextSendMessage(text=test_text)
         )
-    elif text == 'demo':
+    elif text == u'おすすめ教えて':
         f_path_tops = 'sumple'
         f_path_bottoms = 'sumple'
         line_bot_api.push_message(
