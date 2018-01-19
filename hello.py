@@ -230,6 +230,7 @@ def confirm_message(event):
 
     """
     text = event.message.text
+    from models action
     global state
 
     # textがconfirmなら2択表示
@@ -292,9 +293,15 @@ def confirm_message(event):
         #userid!=
         #img_path is None
         #else
-        if state.wear_type is None and state.img_path is None:
-        elif 'Tops'　or 'Bottoms' in state.wear_type and state.img_path is not None:
-        elif 'Tops'　or 'Bottoms' in state.wear_type and state.img_path is None:
+        for state in global_states:
+        if state['user_id'] != sender_user_id:
+            continue
+        else:
+            if state['image_path'] is None:
+                return False
+            else:
+                return True
+    return True
 
     elif ':Tops' in text:
         # CSVに書く作業
