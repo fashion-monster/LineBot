@@ -135,7 +135,7 @@ def image_message(event):
     Returns:
 
     """
-    requests.get(url='http://127.0.0.1:5001')
+    queue = requests.get(url='http://127.0.0.1:5001')
 
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
@@ -242,7 +242,7 @@ def confirm_message(event):
 
     """
     text = event.message.text
-    requests.get(url='http://127.0.0.1:5001')
+    queue = requests.get(url='http://127.0.0.1:5001')
     # textがconfirmなら2択表示
     if text == 'confirm':
         confirm_template = ConfirmTemplate(text='Do it?', actions=[
@@ -287,19 +287,19 @@ def confirm_message(event):
         )
     elif text == u'おすすめ':
         r = (requests.get(url='http://127.0.0.1:9000'))
-         recommend = json.loads(str(r.text))
-         recommend = json.loads(str(recommend))
-         recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
-         recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"bottoms1"]
+        recommend = json.loads(str(r.text))
+        recommend = json.loads(str(recommend))
+        recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
+        recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"bottoms1"]
 
-         line_bot_api.reply_message(
-             event.reply_token, [
-                 ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_t,
+        line_bot_api.reply_message(
+            event.reply_token, [
+                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_t,
                                   preview_image_url='https://zoozoo-monster.work' + recommend_t),
-                 ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_b,
+                ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_b,
                                   preview_image_url='https://zoozoo-monster.work' + recommend_b)
-             ]
-         )
+            ]
+        )
 
     elif ('Tops' in text) or ('Bottoms' in text):
 
