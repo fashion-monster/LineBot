@@ -156,7 +156,7 @@ def image_message(event):
             else:
                 if (state['img_path'] is None)or (state[u'img_path'] is None):
                     # CSVに書く作業
-                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state['text'])]
+                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state['cloth_type'])]
                     with open('clothe_types.csv', 'a') as f:
                         writer = csv.writer(f, lineterminator='\n')
                         writer.writerow(type_list)
