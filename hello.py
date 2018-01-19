@@ -66,7 +66,7 @@ def img_process_queue():
                                cloth_type=body.cloth_type,
                                img_path=body.img_path,
                                processing=body.processing,
-                               next_action=body.next_action)
+                               action_origin=body.action_origin)
     result_state = ResultState(user_id=body.user_id,
                                message="受け付けました　しばらくお待ちください",
                                error_type="")
@@ -166,6 +166,8 @@ def image_message(event):
     Returns:
 
     """
+    p = copy.deepcopy(q.queue)
+    text = event.message.text
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
@@ -177,30 +179,35 @@ def image_message(event):
         header = {'content-type': 'application/json'}
         print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
 
-        global_states = copy.deepcopy(ActionState())
+        global_states = copy.deepcopy(q.queue)
         for state in global_states:
-        if state['user_id'] != event.source.user_id:
-            continue
-        else:
-            if state['img_path'] is None:
-                #Qに送る
-                header = {'content-type': 'application/json'}
-                data = {'user_id': event.source.user_id, 'cloth_type': state['cloth_type'], 'img_path': f_path ,'processing': '',"next_action": ''}
-                requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
-                return True
-
+            if state[u'user_id'] != event.source.user_id:
+                continue
             else:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text= text + 'トップスかボトムスを選択してください')
-                )
-                return False
+                if state[u'img_path'] is None:
+                    # CSVに書く作業
+                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(text)]
+                    with open('clothe_types.csv', 'a') as f:
+                        writer = csv.writer(f, lineterminator='\n')
+                        writer.writerow(type_list)
+                    #Qに送る
+                    header = {'content-type': 'application/json'}
+                    data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path ,"action_origin": 'message_img'}
+                    requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+                    return True
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text= text + 'トップスかボトムスを選択してください')
-    )
-    return False
+                else:
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text= text + 'トップスかボトムスを選択してください')
+                    )
+                    return False
+
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text= text + 'トップスかボトムスを選択してください')
+        )
+        return False
     #        line_bot_api.reply_message(
     #            event.reply_token,
     #            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
@@ -281,6 +288,7 @@ def confirm_message(event):
 
     """
     text = event.message.text
+    p = copy.deepcopy(q.queue)
 
     # textがconfirmなら2択表示
     if text == 'confirm':
@@ -337,39 +345,42 @@ def confirm_message(event):
         )
 
     elif 'Tops'　or 'Bottoms' in text:
-        global_states = copy.deepcopy(ActionState())
+        global_states = copy.deepcopy(q.queue)
         for state in global_states:
-        if state['user_id'] != event.source.user_id:
-            continue
-        else:
-            if state['img_path'] is None:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text= state['cloth_type'] + 'の画像を送信後この操作が行えます')
-                )
-                return False
-
+            if state[u'user_id'] != event.source.user_id:
+                continue
             else:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text= text + 'の画像を送信してください')
-                )
-                #Qに送る
-                #アクションステート使って
-                header = {'content-type': 'application/json'}
-                data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '','processing': '',"next_action": ''}
-                requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
-                return True
+                if state[u'img_path'] is None:
+                    # 連続で文字送信
+                    line_bot_api.reply_message(
+                         event.reply_token,
+                         TextSendMessage(text= state[u'cloth_type'] + 'の画像を送信後この操作が行えます')
+                    )
+                    return False
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text= text + 'の画像を送信してください')
-    )
-    #Qに送る
-    header = {'content-type': 'application/json'}
-    data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '','processing': '',"next_action": ''}
-    requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
-    return True
+                else:
+                    # 画像加工待ちのユーザー操作
+                    line_bot_api.reply_message(
+                         event.reply_token,
+                         TextSendMessage(text= text + 'の画像を送信してください')
+                    )
+                    #Qに送る
+                    #アクションステート使って
+                    header = {'content-type': 'application/json'}
+                    data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',"action_origin": 'message_text'}
+                    requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+                    return True
+        # 新規の正しいユーザー操作
+        line_bot_api.reply_message(
+             event.reply_token,
+             TextSendMessage(text= text + 'の画像を送信してください')
+        )
+        #Qに送る
+        header = {'content-type': 'application/json'}
+        data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',"action_origin": 'message_text'}
+
+        requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+        return True
 
     elif ':Tops' in text:
         # CSVに書く作業
