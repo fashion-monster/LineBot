@@ -23,7 +23,7 @@ const options = {
 //
 const app = express();
 const queue = {queue:[]};
-app.use(bodyParser());
+app.use(bodyParser.json());
 // 現在のキューを返すと嬉しい
 app.get('/', (req, res)=>{ 
     res.setHeader('Content-Type','application/json');
@@ -36,6 +36,7 @@ app.post('/',(req,res)=>{
   res.setHeader('Content-Type', 'application/json');
   res.json('{"message":"OK"}');
   // 実際のAPI部分
+  console.log(req.body)
   if(req.body.action === ACTION_MESSAGE_TEXT){
     // TopsかBottomsのメッセージがきた時、queueに新規で追加
     
