@@ -23,11 +23,11 @@ def similarity():
     ranking_data = read_csv("tools/ranking.csv")
 
     user_id = request.form["user_id"]
-    user_clothe = request.form["user_clothe"]
-    user_clothe_type = request.form["user_clothe_type"]
+    user_cloth = request.form["img_path"]
+    user_cloth_type = request.form["cloth_type"]
 
-    user_clothe_img = cv2.imread("tmp/cropped/" + str(user_clothe))
-    posterize_user_clothe_image = posterize_image(user_clothe_img)
+    user_cloth_img = cv2.imread("tmp/cropped/" + str(user_cloth))
+    posterize_user_cloth_image = posterize_image(user_cloth_img)
 
     for r in ranking_data:
         
@@ -35,14 +35,14 @@ def similarity():
         month = r[1]
         rank = r[2]
         for i, item in enumerate(r[3:]):
-            if item != "" and user_clothe_type == "Tops" and i < 3:
+            if item != "" and user_cloth_type == "Tops" and i < 3:
                 ranking_tops = item
-                simi = calculate_color_similarity(posterize_user_clothe_image, ranking_tops)
-                writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, year, month, rank, simi])
-            elif item != "" and user_clothe_type == "Bottoms" and i == 3:
+                simi = calculate_color_similarity(posterize_user_cloth_image, ranking_tops)
+                writer.writerow([user_id, user_cloth, ranking_tops, user_cloth_type, year, month, rank, simi])
+            elif item != "" and user_cloth_type == "Bottoms" and i == 3:
                 ranking_bottoms = item
-                simi = calculate_color_similarity(posterize_user_clothe_image, ranking_bottoms)
-                writer.writerow([user_id, user_clothe, ranking_bottoms, user_clothe_type, year, month, rank, simi])
+                simi = calculate_color_similarity(posterize_user_cloth_image, ranking_bottoms)
+                writer.writerow([user_id, user_cloth, ranking_bottoms, user_cloth_type, year, month, rank, simi])
 
     f.close()
     response = make_response()
