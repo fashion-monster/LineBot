@@ -231,26 +231,6 @@ def push_message():
     return "OK!"
 
 
-@app.route('/push_state', methods=['POST'])
-def received_state():
-    """
-
-    Returns:
-
-    """
-    # TODO:ここ怪しいです
-    # 仮の受け取る変数
-    # user = user_id
-    # message = text_text
-    # err = error_text
-    #
-    # line_bot_api.push_message(user,
-    #                           TextSendMessage(text=text_state)
-    #                           )
-
-    return "OK!"
-
-
 @handler.add(MessageEvent, message=TextMessage)
 def confirm_message(event):
     """
