@@ -4,8 +4,10 @@ import requests
 import csv
 import json
 import utils.weather as weather
+import copy
+from models.state import ActionState, ResultState
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -17,6 +19,7 @@ from linebot.models import (
     FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage, ConfirmTemplate,
     MessageTemplateAction, TemplateSendMessage, ButtonsTemplate, URITemplateAction, PostbackTemplateAction
 )
+import Queue
 
 app = Flask(__name__)
 file_path = "./image"
@@ -26,6 +29,8 @@ YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
+
+q = Queue.Queue()
 
 
 @app.route("/")
@@ -45,6 +50,37 @@ def route_dir():
     .min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
     crossorigin="anonymous"></script> </head> <body> <h1>Hello world</h1> </body> """
     return html
+
+
+@app.route("/img_process_queue")
+def img_process_queue():
+    """
+    Args:
+
+    Returns:
+
+    action_stateとresult_stateの関係性をどこかに書いたほうがいいのか？
+    """
+    body = request.get_json()
+    action_state = ActionState(user_id=body.user_id,
+                               cloth_type=body.cloth_type,
+                               img_path=body.img_path,
+                               processing=body.processing,
+                               next_action=body.next_action)
+    result_state = ResultState(user_id=body.user_id,
+                               message="受け付けました　しばらくお待ちください",
+                               error_type="")
+    # 処理が終わった時用
+    if action_state.processing == action_state.processing_state['done']:
+        q.get()
+        p = copy.deepcopy(q.queue)
+        requests.post(url='http://127.0.0.1:8050/similarity', data=(p[0].to_dict()))
+    # 新しいのを受け付ける
+    else:
+        requests.post(url='http://127.0.0.1/push_message', data=jsonify(result_state.to_dict()))
+        q.put(action_state)
+        if q.empty():  # 特に一回目
+            requests.post(url='http://127.0.0.1:8050/similarity', data=(action_state.to_dict()))
 
 
 @app.route("/callback", methods=['POST'])
@@ -197,7 +233,6 @@ def push_message():
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
                 TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
             ])
-
     return "OK!"
 
 @app.route('/push_state', methods=['POST'])
