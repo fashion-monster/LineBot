@@ -38,6 +38,7 @@ app.post('/',(req,res)=>{
   // 実際のAPI部分
   if(req.body.action === ACTION_MESSAGE_TEXT){
     // TopsかBottomsのメッセージがきた時、queueに新規で追加
+    
     queue.queue.push({
         "user_id":req.body.user_id,
         "cloth_type":req.body.cloth_type,
@@ -45,6 +46,8 @@ app.post('/',(req,res)=>{
         "processing":PROCESSING_STATE_EMPTY,
         "action":req.body.action
       })
+    console.log("text:")
+    console.log(queue.queue)
     }
     else if(req.body.action === ACTION_MESSAGE_IMAGE){
       // 画像が送られてきたら、送信者の最新のqueueに画像のパスを追加する
@@ -65,6 +68,8 @@ app.post('/',(req,res)=>{
           console.log("processing request Done");
         })
       }
+      console.log("image:")
+      console.log(queue.queue)
     }
     else if(req.body.action === ACTION_IMAGE_PROCESSING){
       // 画像処理が終了した時
@@ -79,6 +84,8 @@ app.post('/',(req,res)=>{
           console.log("processing request Done");
         });
       }
+      console.log("processing:")
+      console.log(queue.queue)
     }
   })
 app.listen(5001);
