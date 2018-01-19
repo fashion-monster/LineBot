@@ -135,9 +135,8 @@ def image_message(event):
     Returns:
 
     """
-    # TODO:qをつかわない
-    p = copy.deepcopy(q.queue)
-    text = event.message.text
+    request.get(url='http://127.0.0.1:5001')
+
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
@@ -149,22 +148,22 @@ def image_message(event):
         header = {'content-type': 'application/json'}
         print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
 
-        global_states = copy.deepcopy(q.queue)
-        for state in global_states:
+
+        for state in queue:
             if state[u'user_id'] != event.source.user_id:
                 continue
             else:
                 if state[u'img_path'] is None:
                     # CSVに書く作業
-                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(text)]
+                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state[u'text'])]
                     with open('clothe_types.csv', 'a') as f:
                         writer = csv.writer(f, lineterminator='\n')
                         writer.writerow(type_list)
                     # Qに送る
                     header = {'content-type': 'application/json'}
                     data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path,
-                            "action_origin": 'message_img'}
-                    requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+                            "action": 'image'}
+                    requests.post(url='http://127.0.0.1:5001', headers=header, data=data)
                     return True
 
                 else:
@@ -243,9 +242,7 @@ def confirm_message(event):
 
     """
     text = event.message.text
-    # TODO:qをつかなわい
-    p = copy.deepcopy(q.queue)
-
+    request.get(url='http://127.0.0.1:5001')
     # textがconfirmなら2択表示
     if text == 'confirm':
         confirm_template = ConfirmTemplate(text='Do it?', actions=[
@@ -305,10 +302,8 @@ def confirm_message(event):
          )
 
     elif ('Tops' in text) or ('Bottoms' in text):
-        # TODO:qをつかわない
-        global_states = copy.deepcopy(q.queue)
-        request.get(url='')
-        for state in global_states:
+
+        for state in queue:
             if state[u'user_id'] != event.source.user_id:
                 continue
             else:
@@ -330,8 +325,8 @@ def confirm_message(event):
                     # アクションステート使って
                     header = {'content-type': 'application/json'}
                     data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',
-                            "action_origin": 'message_text'}
-                    requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+                            "action": 'text'}
+                    requests.post(url='http://127.0.0.1:5001', headers=header, data=data)
                     return True
         # 新規の正しいユーザー操作
         line_bot_api.reply_message(
@@ -340,9 +335,9 @@ def confirm_message(event):
         )
         # Qに送る
         header = {'content-type': 'application/json'}
-        data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '', "action_origin": 'message_text'}
+        data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '', "action": 'text'}
 
-        requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+        requests.post(url='http://127.0.0.1:5001', headers=header, data=data)
         return True
 
     elif ':Tops' in text:
