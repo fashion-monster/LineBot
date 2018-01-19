@@ -319,7 +319,8 @@ def confirm_message(event):
                     # 連続で文字送信
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=state['cloth_type'] + 'の画像を送信後この操作が行えます')
+                        # TextSendMessage(text=state['cloth_type'] + 'の画像を送信後この操作が行えます')
+                        TextSendMessage(text='の画像を送信後この操作が行えます')
                     )
                     return False
 
@@ -332,8 +333,8 @@ def confirm_message(event):
                     # Qに送る
                     # アクションステート使って
                     header = {'content-type': 'application/json'}
-                    data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',
-                            "action": 'text'}
+                    # data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',
+                    #         "action": 'text'}
                     data = ActionState(user_id=event.source.user_id,
                                        cloth_type=text,
                                        img_path='',
