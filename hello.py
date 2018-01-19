@@ -1,13 +1,12 @@
 # coding=utf-8
-import os
-import requests
+import Queue
+import copy
 import csv
 import json
-import utils.weather as weather
-import copy
-from models.state import ActionState, ResultState
+import os
 
-from flask import Flask, request, abort, jsonify
+import requests
+from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -15,11 +14,12 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    ImageSendMessage, UnfollowEvent,
-    FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage, ConfirmTemplate,
+    ImageSendMessage, FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage,
+    ConfirmTemplate,
     MessageTemplateAction, TemplateSendMessage, ButtonsTemplate, URITemplateAction, PostbackTemplateAction
 )
-import Queue
+
+import utils.weather as weather
 
 app = Flask(__name__)
 file_path = "./image"
@@ -135,6 +135,7 @@ def image_message(event):
     Returns:
 
     """
+    # TODO:qをつかわない
     p = copy.deepcopy(q.queue)
     text = event.message.text
     msg_id = event.message.id
@@ -159,22 +160,23 @@ def image_message(event):
                     with open('clothe_types.csv', 'a') as f:
                         writer = csv.writer(f, lineterminator='\n')
                         writer.writerow(type_list)
-                    #Qに送る
+                    # Qに送る
                     header = {'content-type': 'application/json'}
-                    data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path ,"action_origin": 'message_img'}
+                    data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path,
+                            "action_origin": 'message_img'}
                     requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
                     return True
 
                 else:
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text= text + 'トップスかボトムスを選択してください')
+                        TextSendMessage(text=text + 'トップスかボトムスを選択してください')
                     )
                     return False
 
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text= text + 'トップスかボトムスを選択してください')
+            TextSendMessage(text=text + 'トップスかボトムスを選択してください')
         )
         return False
     #        line_bot_api.reply_message(
@@ -208,6 +210,7 @@ def handle_location(event):
         event.reply_token,
         TextSendMessage(text=msg))
 
+
 @app.route('/push_message_duplicate', methods=['POST'])
 def push_message():
     """
@@ -223,9 +226,10 @@ def push_message():
             line_bot_api.push_message(str(header[0]), [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
-                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")##pushテスト用
+                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")  ##pushテスト用
             ])
     return "OK!"
+
 
 @app.route('/push_state', methods=['POST'])
 def received_state():
@@ -234,16 +238,18 @@ def received_state():
     Returns:
 
     """
-    #仮の受け取る変数
-    user = user_id;
-    text_state = text_text
-    erroe = error_text
-
-    line_bot_api.push_message(user,
-        TextSendMessage(text=text_state)
-        )
+    # TODO:ここ怪しいです
+    # 仮の受け取る変数
+    # user = user_id
+    # message = text_text
+    # err = error_text
+    #
+    # line_bot_api.push_message(user,
+    #                           TextSendMessage(text=text_state)
+    #                           )
 
     return "OK!"
+
 
 @handler.add(MessageEvent, message=TextMessage)
 def confirm_message(event):
@@ -257,6 +263,7 @@ def confirm_message(event):
 
     """
     text = event.message.text
+    # TODO:qをつかなわい
     p = copy.deepcopy(q.queue)
 
     # textがconfirmなら2択表示
@@ -305,15 +312,16 @@ def confirm_message(event):
         f_path_tops = 'sumple'
         f_path_bottoms = 'sumple'
         line_bot_api.push_message(
-                    'U4fce6cc2cc3530ae2f4b7ca0609edd40',[
-                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
-                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
-                    ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
-                                     preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
+            'U4fce6cc2cc3530ae2f4b7ca0609edd40', [
+                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
+                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
+                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
+                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
 
-    elif 'Tops'　or 'Bottoms' in text:
+    elif ('Tops' in text) or ('Bottoms' in text):
+        # TODO:qをつかわない
         global_states = copy.deepcopy(q.queue)
         for state in global_states:
             if state[u'user_id'] != event.source.user_id:
@@ -322,31 +330,32 @@ def confirm_message(event):
                 if state[u'img_path'] is None:
                     # 連続で文字送信
                     line_bot_api.reply_message(
-                         event.reply_token,
-                         TextSendMessage(text= state[u'cloth_type'] + 'の画像を送信後この操作が行えます')
+                        event.reply_token,
+                        TextSendMessage(text=state[u'cloth_type'] + 'の画像を送信後この操作が行えます')
                     )
                     return False
 
                 else:
                     # 画像加工待ちのユーザー操作
                     line_bot_api.reply_message(
-                         event.reply_token,
-                         TextSendMessage(text= text + 'の画像を送信してください')
+                        event.reply_token,
+                        TextSendMessage(text=text + 'の画像を送信してください')
                     )
-                    #Qに送る
-                    #アクションステート使って
+                    # Qに送る
+                    # アクションステート使って
                     header = {'content-type': 'application/json'}
-                    data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',"action_origin": 'message_text'}
+                    data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',
+                            "action_origin": 'message_text'}
                     requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
                     return True
         # 新規の正しいユーザー操作
         line_bot_api.reply_message(
-             event.reply_token,
-             TextSendMessage(text= text + 'の画像を送信してください')
+            event.reply_token,
+            TextSendMessage(text=text + 'の画像を送信してください')
         )
-        #Qに送る
+        # Qに送る
         header = {'content-type': 'application/json'}
-        data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',"action_origin": 'message_text'}
+        data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '', "action_origin": 'message_text'}
 
         requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
         return True
