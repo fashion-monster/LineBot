@@ -315,7 +315,7 @@ def confirm_message(event):
             if state[u'user_id'] != event.source.user_id:
                 continue
             else:
-                if state[u'img_path'] is None:
+                if state['img_path'] is None or state['img_path'] == "":
                     # 連続で文字送信
                     line_bot_api.reply_message(
                         event.reply_token,
