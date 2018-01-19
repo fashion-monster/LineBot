@@ -30,8 +30,10 @@ def pickMostUsedColor(src_img_path):
     height = src_img.shape[0]
     width = src_img.shape[1]
 
-    for h in range(height):
-        for w in range(width):
+    step_count = 1
+    
+    for h in range(0,height,step_count):
+        for w in range(0,width,step_count):
             b = src_img.item(h, w, 0)
             g = src_img.item(h, w, 1)
             r = src_img.item(h, w, 2)
