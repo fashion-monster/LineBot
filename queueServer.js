@@ -39,18 +39,18 @@ app.post('/',(req,res)=>{
   if(req.body.action === ACTION_MESSAGE_TEXT){
     // TopsかBottomsのメッセージがきた時、queueに新規で追加
     queue.queue.push({
-        "userId":req.body.user_id,
-        "clothType":req.body.cloth_type,
-        "imgPath":null,
+        "user_id":req.body.user_id,
+        "cloth_type":req.body.cloth_type,
+        "img_path":null,
         "processing":PROCESSING_STATE_EMPTY,
         "action":req.body.action
       })
     }
     else if(req.body.action === ACTION_MESSAGE_IMAGE){
       // 画像が送られてきたら、送信者の最新のqueueに画像のパスを追加する
-      for(let i = queue.queue.length;i<0;i--){
-        if(queue.queue[i].userId === req.body.user_id){
-          queue.queue[i].imgPath = req.body.img_path;
+      for(let i = queue.queue.length-1;i>=0;i--){
+        if(queue.queue[i].user_id === req.body.user_id){
+          queue.queue[i].img_path = req.body.img_path;
           break;
         }
       }
@@ -64,21 +64,21 @@ app.post('/',(req,res)=>{
           },()=>{
           console.log("processing request Done");
         })
-      }  
+      }
     }
     else if(req.body.action === ACTION_IMAGE_PROCESSING){
-    // 画像処理が終了した時
-    queue.queue.shift();
-    if(queue.queue.length !== 0){
-      queue.queue[0].processing = PROCESSING_STATE_BUSY;
-      request({
+      // 画像処理が終了した時
+      queue.queue.shift();
+      if(queue.queue.length !== 0){
+        queue.queue[0].processing = PROCESSING_STATE_BUSY;
+        request({
           ...options,
           url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
           body:{...queue.queue[0]}
         },()=>{
-        console.log("processing request Done");
-      });
+          console.log("processing request Done");
+        });
+      }
     }
-  }
-})
+  })
 app.listen(5001);
