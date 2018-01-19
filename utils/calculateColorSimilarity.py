@@ -4,7 +4,6 @@ import numpy as np
 
 import itertools
 
-
 def decleaseColor(val):
     if val < 64:
         return 32
@@ -37,18 +36,21 @@ def posterize_image(src_img):
 
 
 # ２枚の画像から色の類似度を返す
-def calculateColorSimilarity(img1_path, img2_path):
-    img1 = cv2.imread("tmp/cropped/" + img1_path)
-    img2 = cv2.imread("tmp/cropped/" + img2_path)
-
-    if img1 is None or img2 is None:
+def calculateColorSimilarity(posterize_clothe_img, rank_img_path):
+    rank_img = cv2.imread("tmp/cropped/" + str(rank_img_path))
+    if rank_img is None:
         return 0
+    resize_retio = 4
+    img1_height = rank_img.shape[0]
+    img1_width = rank_img.shape[1]
+    resize_img1 = cv2.resize(rank_img, (round(img1_height/resize_retio), round(img1_width/resize_retio)))
 
-    tops1 = posterize_image(img1)
-    tops2 = posterize_image(img2)
+    posterize_clothe_img_resize = cv2.resize(posterize_clothe_img, (round(img1_height/resize_retio), round(img1_width/resize_retio)))
 
-    hist1 = cv2.calcHist([tops1], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
-    hist2 = cv2.calcHist([tops2], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
+    posterize_rank_img = posterize_image(resize_img1)
+
+    hist1 = cv2.calcHist([posterize_rank_img], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
+    hist2 = cv2.calcHist([posterize_clothe_img_resize], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
 
     corr = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
 
