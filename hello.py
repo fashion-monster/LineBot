@@ -52,37 +52,6 @@ def route_dir():
     return html
 
 
-@app.route("/img_process_queue")
-def img_process_queue():
-    """
-    Args:
-
-    Returns:
-
-    action_stateとresult_stateの関係性をどこかに書いたほうがいいのか？
-    """
-    body = request.get_json()
-    action_state = ActionState(user_id=body.user_id,
-                               cloth_type=body.cloth_type,
-                               img_path=body.img_path,
-                               processing=body.processing,
-                               action_origin=body.action_origin)
-    result_state = ResultState(user_id=body.user_id,
-                               message="受け付けました　しばらくお待ちください",
-                               error_type="")
-    # 処理が終わった時用
-    if action_state.processing == action_state.processing_state['done']:
-        q.get()
-        p = copy.deepcopy(q.queue)
-        requests.post(url='http://127.0.0.1:8050/similarity', data=(p[0].to_dict()))
-    # 新しいのを受け付ける
-    else:
-        requests.post(url='http://127.0.0.1/push_message', data=jsonify(result_state.to_dict()))
-        q.put(action_state)
-        if q.empty():  # 特に一回目
-            requests.post(url='http://127.0.0.1:8050/similarity', data=(action_state.to_dict()))
-
-
 @app.route("/callback", methods=['POST'])
 def callback():
     """for LINE certificate.
@@ -137,12 +106,8 @@ def handle_follow(event):
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
-<<<<<<< HEAD
-            TextSendMessage(text="このbotは登録してある服から服装の提案を行います")
-=======
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
             TextSendMessage(text="リッチメニューから操作をお願いします")
->>>>>>> writecsv
         ]
     )
 
