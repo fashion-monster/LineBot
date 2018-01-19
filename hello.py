@@ -66,7 +66,7 @@ def img_process_queue():
                                cloth_type=body.cloth_type,
                                img_path=body.img_path,
                                processing=body.processing,
-                               next_action=body.next_action)
+                               action_origin=body.action_origin)
     result_state = ResultState(user_id=body.user_id,
                                message="受け付けました　しばらくお待ちください",
                                error_type="")
@@ -137,7 +137,12 @@ def handle_follow(event):
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
+<<<<<<< HEAD
             TextSendMessage(text="このbotは登録してある服から服装の提案を行います")
+=======
+            TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
+            TextSendMessage(text="リッチメニューから操作をお願いします")
+>>>>>>> writecsv
         ]
     )
 
@@ -165,6 +170,8 @@ def image_message(event):
     Returns:
 
     """
+    p = copy.deepcopy(q.queue)
+    text = event.message.text
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
     f_path = '/tmp/' + msg_id + '.jpg'
@@ -175,15 +182,36 @@ def image_message(event):
         print(f_path)
         header = {'content-type': 'application/json'}
         print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
+
+        global_states = copy.deepcopy(q.queue)
+        for state in global_states:
+            if state[u'user_id'] != event.source.user_id:
+                continue
+            else:
+                if state[u'img_path'] is None:
+                    # CSVに書く作業
+                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(text)]
+                    with open('clothe_types.csv', 'a') as f:
+                        writer = csv.writer(f, lineterminator='\n')
+                        writer.writerow(type_list)
+                    #Qに送る
+                    header = {'content-type': 'application/json'}
+                    data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path ,"action_origin": 'message_img'}
+                    requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+                    return True
+
+                else:
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text= text + 'トップスかボトムスを選択してください')
+                    )
+                    return False
+
         line_bot_api.reply_message(
-            event.reply_token, [
-                TextSendMessage(text='Topsの場合は'),
-                TextSendMessage(text=msg_id + ':Tops'),
-                TextSendMessage(text='Bottomsの場合は'),
-                TextSendMessage(text=msg_id + ':Bottoms'),
-                TextSendMessage(text='と入力してください')
-            ]
+            event.reply_token,
+            TextSendMessage(text= text + 'トップスかボトムスを選択してください')
         )
+        return False
     #        line_bot_api.reply_message(
     #            event.reply_token,
     #            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
@@ -215,7 +243,7 @@ def handle_location(event):
         event.reply_token,
         TextSendMessage(text=msg))
 
-@app.route('/push_message', methods=['POST'])
+@app.route('/push_message_duplicate', methods=['POST'])
 def push_message():
     """
 
@@ -230,10 +258,27 @@ def push_message():
             line_bot_api.push_message(str(header[0]), [
                 TextSendMessage(text="Topsの登録を行います"),
                 TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
-                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
+                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")##pushテスト用
             ])
     return "OK!"
 
+@app.route('/push_state', methods=['POST'])
+def received_state():
+    """
+
+    Returns:
+
+    """
+    #仮の受け取る変数
+    user = user_id;
+    text_state = text_text
+    erroe = error_text
+
+    line_bot_api.push_message(user,
+        TextSendMessage(text=text_state)
+        )
+
+    return "OK!"
 
 @handler.add(MessageEvent, message=TextMessage)
 def confirm_message(event):
@@ -247,6 +292,8 @@ def confirm_message(event):
 
     """
     text = event.message.text
+    p = copy.deepcopy(q.queue)
+
     # textがconfirmなら2択表示
     if text == 'confirm':
         confirm_template = ConfirmTemplate(text='Do it?', actions=[
@@ -276,12 +323,13 @@ def confirm_message(event):
     elif text == u'チュートリアル':
         line_bot_api.reply_message(
             event.reply_token, [
-                TextSendMessage(text="Topsの登録を行います"),
-                TextSendMessage(text="Topsの画像を送信して、その後の指示に従ってください"),
-                TextSendMessage(text="画像登録が成功すればチュートリアル終了です")
+                TextSendMessage(text="おすすめは本日の服装の提案"),
+                TextSendMessage(text="トップス登録はトップスボタンを押し画像送信"),
+                TextSendMessage(text="ボトムス登録はボトムスボタンを押し画像送信"),
+                TextSendMessage(text="あなたのMyクローゼットに服が登録されます")
             ])
     elif text == u'テスト':
-        requests.post(url='https://127.0.0.1:5000/push_message')
+        requests.post(url='https://127.0.0.1:5000/push_message_duplicate')
     elif text == u'確認':
         test_text = event.source.user_id
         line_bot_api.reply_message(
@@ -299,6 +347,44 @@ def confirm_message(event):
                                      preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
             ]
         )
+
+    elif 'Tops'　or 'Bottoms' in text:
+        global_states = copy.deepcopy(q.queue)
+        for state in global_states:
+            if state[u'user_id'] != event.source.user_id:
+                continue
+            else:
+                if state[u'img_path'] is None:
+                    # 連続で文字送信
+                    line_bot_api.reply_message(
+                         event.reply_token,
+                         TextSendMessage(text= state[u'cloth_type'] + 'の画像を送信後この操作が行えます')
+                    )
+                    return False
+
+                else:
+                    # 画像加工待ちのユーザー操作
+                    line_bot_api.reply_message(
+                         event.reply_token,
+                         TextSendMessage(text= text + 'の画像を送信してください')
+                    )
+                    #Qに送る
+                    #アクションステート使って
+                    header = {'content-type': 'application/json'}
+                    data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',"action_origin": 'message_text'}
+                    requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+                    return True
+        # 新規の正しいユーザー操作
+        line_bot_api.reply_message(
+             event.reply_token,
+             TextSendMessage(text= text + 'の画像を送信してください')
+        )
+        #Qに送る
+        header = {'content-type': 'application/json'}
+        data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',"action_origin": 'message_text'}
+
+        requests.post(url='http://127.0.0.1:5000/img_process_queue', headers=header, data=data)
+        return True
 
     elif ':Tops' in text:
         # CSVに書く作業
@@ -346,7 +432,7 @@ def confirm_message(event):
             event.reply_token, [
                 TextSendMessage(text='ご利用ありがとうございます'),
                 TextSendMessage(text='このbotはあなたが登録した服の中から明日の服装を提案します'),
-                TextSendMessage(text='服の登録は画像の送信→服の種類選択の手順で行えます')
+                TextSendMessage(text='服の登録はリッチメニューより行えます')
             ]
         )
 
