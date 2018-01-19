@@ -151,12 +151,12 @@ def image_message(event):
 
         d = json.loads(queue)
         for state in d['queue']:
-            if state[u'user_id'] != event.source.user_id:
+            if state['user_id'] != event.source.user_id:
                 continue
             else:
-                if state[u'img_path'] is None:
+                if (state['img_path'] is None)or (state[u'img_path'] is None):
                     # CSVに書く作業
-                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state[u'text'])]
+                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state['text'])]
                     with open('clothe_types.csv', 'a') as f:
                         writer = csv.writer(f, lineterminator='\n')
                         writer.writerow(type_list)
@@ -165,7 +165,7 @@ def image_message(event):
                     # data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path,
                     #         "action": 'image'}
                     data = ActionState(user_id=event.source.user_id,
-                                       cloth_type=state[u'cloth_type'],
+                                       cloth_type=state['cloth_type'],
                                        img_path=f_path,
                                        action='image',
                                        processing=ActionState.processing_state['busy']).to_dict()
@@ -319,7 +319,7 @@ def confirm_message(event):
                     # 連続で文字送信
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=state[u'cloth_type'] + 'の画像を送信後この操作が行えます')
+                        TextSendMessage(text=state['cloth_type'] + 'の画像を送信後この操作が行えます')
                     )
                     return False
 
