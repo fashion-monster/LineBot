@@ -148,7 +148,7 @@ def image_message(event):
         header = {'content-type': 'application/json'}
         print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
 
-        d = json.load(queue)
+        d = json.loads(queue)
         for state in d['queue']:
             if state[u'user_id'] != event.source.user_id:
                 continue
@@ -302,7 +302,7 @@ def confirm_message(event):
         )
 
     elif ('Tops' in text) or ('Bottoms' in text):
-        d = json.load(queue)
+        d = json.loads(queue)
         for state in d['queue']:
             if state[u'user_id'] != event.source.user_id:
                 continue
