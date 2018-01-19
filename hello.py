@@ -135,7 +135,7 @@ def image_message(event):
     Returns:
 
     """
-    queue = requests.get(url='http://127.0.0.1:5001')
+    queue = json.loads(requests.get(url='http://127.0.0.1:5001').text)
 
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
@@ -169,13 +169,13 @@ def image_message(event):
                 else:
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=text + 'トップスかボトムスを選択してください')
+                        TextSendMessage('トップスかボトムスを選択してください')
                     )
                     return False
 
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=text + 'トップスかボトムスを選択してください')
+            TextSendMessage(text='トップスかボトムスを選択してください')
         )
         return False
     #        line_bot_api.reply_message(
@@ -242,7 +242,9 @@ def confirm_message(event):
 
     """
     text = event.message.text
-    queue = requests.get(url='http://127.0.0.1:5001')
+    queue = json.loads(requests.get(url='http://127.0.0.1:5001').text)
+
+
     # textがconfirmなら2択表示
     if text == 'confirm':
         confirm_template = ConfirmTemplate(text='Do it?', actions=[
@@ -319,7 +321,7 @@ def confirm_message(event):
                     # 画像加工待ちのユーザー操作
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=text + 'の画像を送信してください')
+                        TextSendMessage(text='の画像を送信してください')
                     )
                     # Qに送る
                     # アクションステート使って
@@ -331,7 +333,7 @@ def confirm_message(event):
         # 新規の正しいユーザー操作
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=text + 'の画像を送信してください')
+            TextSendMessage(text='の画像を送信してください')
         )
         # Qに送る
         header = {'content-type': 'application/json'}
