@@ -16,7 +16,7 @@ def decleaseColor(val):
 
 
 # 各画素値を減色する
-def posterizeImage(src_img):
+def posterize_image(src_img):
     output_image = src_img.copy()
 
     height = src_img.shape[0]
@@ -47,7 +47,7 @@ def calculateColorSimilarity(posterize_clothe_img, rank_img_path):
 
     posterize_clothe_img_resize = cv2.resize(posterize_clothe_img, (round(img1_height/resize_retio), round(img1_width/resize_retio)))
 
-    posterize_rank_img = posterizeImage(resize_img1)
+    posterize_rank_img = posterize_image(resize_img1)
 
     hist1 = cv2.calcHist([posterize_rank_img], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
     hist2 = cv2.calcHist([posterize_clothe_img_resize], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])

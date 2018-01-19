@@ -1,18 +1,15 @@
 # coding=utf-8
 from flask import Flask, request, make_response
 from utils.calculateColorSimilarity import calculateColorSimilarity
-from utils.calculateColorSimilarity import posterizeImage
+from utils.calculateColorSimilarity import posterize_image
 from utils.pickMostUsedColor import pickMostUsedColor
 from utils.imageResize import resizeImage
-
-from time import sleep
 
 import json
 import csv
 import time
 import cv2
 import numpy
-import requests
 
 
 app = Flask(__name__)
@@ -71,7 +68,7 @@ def similarity():
     user_clothe_type = request.form["user_clothe_type"]
 
     user_clothe_img = cv2.imread("tmp/cropped/" + str(user_clothe))
-    posterize_user_clothe_image = posterizeImage(user_clothe_img)
+    posterize_user_clothe_image = posterize_image(user_clothe_img)
 
     for r in ranking_data:
         
@@ -89,8 +86,12 @@ def similarity():
                 writer.writerow([user_id, user_clothe, ranking_bottoms, user_clothe_type, year, month, rank, simi])
 
     f.close()
+    response = make_response()
+    response.data = json.dumps({"write_csv": "done"})
+    response.headers["Content-Type"] = "application/json"
     
-    requests.post(url='http://127.0.0.1:5001/img_process_queue', data=(json.dumps({"action_origin" : "img_processing"})))
+    return response
+
 
 def readCsv(csvfile):
     f = open(csvfile, 'r')
