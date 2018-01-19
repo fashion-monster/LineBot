@@ -1,5 +1,5 @@
 # coding=utf-8
-from flask import Flask, request, make_response
+from flask import Flask, request, Response
 from utils.calculate_color_similarity import calculate_color_similarity
 from utils.calculate_color_similarity import posterize_image
 
@@ -21,6 +21,7 @@ def similarity():
     """
     f = open('all_pattern_of_Similarity2.csv', 'a')
     writer = csv.writer(f, lineterminator='\n')
+    res = Response()
 
     ranking_data = read_csv("tools/ranking.csv")
 
@@ -48,6 +49,9 @@ def similarity():
 
     f.close()
     requests.post(url='http://127.0.0.1:5001/img_process_queue', data=(json.dumps({"action": "similarity"})))
+    res.status_code = 200
+    res.data = 'DONE'
+    return res
 
 
 def read_csv(csvfile):
