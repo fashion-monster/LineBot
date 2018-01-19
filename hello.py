@@ -348,7 +348,7 @@ def confirm_message(event):
             ]
         )
 
-    elif 'Tops'　or 'Bottoms' in text:
+    elif 'Tops' or 'Bottoms' in text:
         global_states = copy.deepcopy(q.queue)
         for state in global_states:
             if state[u'user_id'] != event.source.user_id:

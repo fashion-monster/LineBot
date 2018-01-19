@@ -1,39 +1,46 @@
+linebotの表
+===
+各ポートとAPIをまとめておきます
 
-
-### 8050
-
-| API名      | 機能                                                 |引数|
-|------------|------------------------------------------------------|---|
-| similarity | 画像名から２枚の画像の類似度を返す                   ||
-| pick       | 画像名から最も使われいる色を多い順に三色をjsonで返す ||
-| resize     | 画像をリサイズした結果を ./tmp/dst/に保存する        ||
-
-
-### 9000
-|API名|機能|引数|
-|---|---|---|
-|/|類似度から三つ推薦してくれる||
-
-### 9998
-|API名|機能|引数|
-|---|---|---|
-|/cloth_detect|服装のエリアを見つけて/home/hashimoto/LineBot/tmp/cropped以下に保存する||
-
-
-### 9999
-|API名|機能|引数|
-|---|---|---|
-|/resize|画像をリサイズする||
-
+ポート番号
 ### 5000
-|API名|機能|引数|
-|---|---|---|
-|/|ハローワールド||
-|/callback|Webhook用||
-|/get_suggestion|提案する||
-|/push_message|メッセージをユーザに送る||
 
-### 5001
-|API名|機能|引数|
-|---|---|---|
-|/|キューの管理||
+| 受信内容 |                     | 機能                                                          |
+|----------|---------------------|---------------------------------------------------------------|
+| フォロー |                     | ユーザIDをCSVに追加 リプライ                                  |
+| 画像     |                     | 画像の保存 画像情報をQに送信 間違えなら正しい操作を促す       |
+| テキスト | confirm             | confirmのリプライ                                             |
+|          | buttons             | buttonsのリプライ                                             |
+|          | チュートリアル      | 使い方のリプライの送信                                        |
+|          | テスト              | push_message_duplicateにリクエスト                            |
+|          | 確認                | 送信者のユーザIDをリプライで返す                              |
+|          | おすすめ            | 服の画像送信                                                  |
+|          | 'Tops' or 'Bottoms' | テキスト情報をQに送信 間違えなら正しい操作を促す              |
+|          | :Topsを含む文       | csv書き込み リプライ similarityに画像が追加されたのを知らせる |
+|          | :Bottomsを含む文    | csv書き込み リプライ similarityに画像が追加されたのを知らせる |
+|          | クリア              | csvの初期化                                                   |
+|          | その他のテキスト    | 定型文のリプライ                                              |
+
+
+
+root一覧
+/img_process_queue
+img_process_queue()
+
+/callback
+callback()
+
+/get_suggestion
+get_suggestion()
+
+/push_message_duplicate
+push_message()プッシュメッセージを送る（使用しない）
+
+/push_state
+received_state()　仮で作ったまんま残っています
+
+WebhookHandler一覧
+handle_follow(event)フォローされたときユーザのID登録とリプライ送信
+image_message(event)Qに画像のデータを送る
+handle_location(event)緯度経度取得（現在動いてない）
+confirm_message(event)テキストメッセージが送られてきたときの処理
