@@ -1,9 +1,7 @@
 # coding=utf-8
 from flask import Flask, request, make_response
-from utils.calculateColorSimilarity import calculateColorSimilarity
-from utils.calculateColorSimilarity import posterize_image
-from utils.pickMostUsedColor import pickMostUsedColor
-from utils.imageResize import resizeImage
+from utils.calculate_color_similarity import calculate_color_similarity
+from utils.calculate_color_similarity import posterize_image
 
 import json
 import csv
@@ -14,45 +12,6 @@ import numpy
 
 app = Flask(__name__)
 
-@app.route("/resize", methods=['POST'])
-def resize():
-    """
-    画像をリサイズした結果を ./tmp/dst/に保存する
-    """
-    image_name = request.form["image_name"]
-    if not resizeImage(image_name):
-        response = make_response()
-        response.data = json.dumps({"resize": "fault"})
-        response.headers["Content-Type"] = "application/json"
-        return response
-    else:
-        response = make_response()
-        response.data = json.dumps({"resize": "success"})
-        response.headers["Content-Type"] = "application/json"
-        return response
-
-
-@app.route("/pick", methods=['POST'])
-def pick():
-    """
-    画像名から最も使われいる色を多い順に三色をjsonで返す
-
-    ex
-    {"red", "blue", "yellow"}
-    """
-
-    
-    image_name = request.form["image_name"]
-    color_dict = pickMostUsedColor(image_name)
-    response = make_response()
-    response.data = json.dumps(color_dict)
-    response.headers["Content-Type"] = "application/json"
-    # elapsed_time = time.time() - start
-    # print (elapsed_time)
-    print("1:{} 2:{} 3:{}".format(color_dict["first_color"],color_dict["second_color"],color_dict["third_color"]))
-
-    return response
-
 @app.route("/similarity", methods=['POST'])
 def similarity():
     """
@@ -61,14 +20,14 @@ def similarity():
     f = open('all_pattern_of_Similarity2.csv', 'a')
     writer = csv.writer(f, lineterminator='\n')
 
-    ranking_data = readCsv("tools/ranking.csv")
+    ranking_data = read_csv("tools/ranking.csv")
 
     user_id = request.form["user_id"]
-    user_clothe = request.form["user_clothe"]
-    user_clothe_type = request.form["user_clothe_type"]
+    user_cloth = request.form["img_path"]
+    user_cloth_type = request.form["cloth_type"]
 
-    user_clothe_img = cv2.imread("tmp/cropped/" + str(user_clothe))
-    posterize_user_clothe_image = posterize_image(user_clothe_img)
+    user_cloth_img = cv2.imread("tmp/cropped/" + str(user_cloth))
+    posterize_user_cloth_image = posterize_image(user_cloth_img)
 
     for r in ranking_data:
         
@@ -76,24 +35,23 @@ def similarity():
         month = r[1]
         rank = r[2]
         for i, item in enumerate(r[3:]):
-            if item != "" and user_clothe_type == "Tops" and i < 3:
+            if item != "" and user_cloth_type == "Tops" and i < 3:
                 ranking_tops = item
-                simi = calculateColorSimilarity(posterize_user_clothe_image, ranking_tops)
-                writer.writerow([user_id, user_clothe, ranking_tops, user_clothe_type, year, month, rank, simi])
-            elif item != "" and user_clothe_type == "Bottoms" and i == 3:
+                simi = calculate_color_similarity(posterize_user_cloth_image, ranking_tops)
+                writer.writerow([user_id, user_cloth, ranking_tops, user_cloth_type, year, month, rank, simi])
+            elif item != "" and user_cloth_type == "Bottoms" and i == 3:
                 ranking_bottoms = item
-                simi = calculateColorSimilarity(posterize_user_clothe_image, ranking_bottoms)
-                writer.writerow([user_id, user_clothe, ranking_bottoms, user_clothe_type, year, month, rank, simi])
+                simi = calculate_color_similarity(posterize_user_cloth_image, ranking_bottoms)
+                writer.writerow([user_id, user_cloth, ranking_bottoms, user_cloth_type, year, month, rank, simi])
 
     f.close()
-    response = make_response()
-    response.data = json.dumps({"write_csv": "done"})
-    response.headers["Content-Type"] = "application/json"
+
+    requests.post(url='http://127.0.0.1:5001/img_process_queue', data=({"action":"similarity"}))
     
-    return response
+    
+    
 
-
-def readCsv(csvfile):
+def read_csv(csvfile):
     f = open(csvfile, 'r')
 
     reader = csv.reader(f)
