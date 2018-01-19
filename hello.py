@@ -137,8 +137,7 @@ def handle_follow(event):
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="登録友達追加ありがとうございます"),
-            TextSendMessage(text="このbotは登録してある服から服装の提案を行います"),
-            TextSendMessage(text="初めに「チュートリアル」と入力してください!")
+            TextSendMessage(text="このbotは登録してある服から服装の提案を行います")
         ]
     )
 
