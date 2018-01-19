@@ -8,9 +8,11 @@ import csv
 import time
 import cv2
 import numpy
-
+import requests
+from models.state import ActionState
 
 app = Flask(__name__)
+
 
 @app.route("/similarity", methods=['POST'])
 def similarity():
@@ -30,7 +32,7 @@ def similarity():
     posterize_user_cloth_image = posterize_image(user_cloth_img)
 
     for r in ranking_data:
-        
+
         year = r[0]
         month = r[1]
         rank = r[2]
@@ -45,11 +47,8 @@ def similarity():
                 writer.writerow([user_id, user_cloth, ranking_bottoms, user_cloth_type, year, month, rank, simi])
 
     f.close()
+    requests.post(url='http://127.0.0.1:5001/img_process_queue', data=(json.dumps({"action": "similarity"})))
 
-    requests.post(url='http://127.0.0.1:5001/img_process_queue', data=({"action":"similarity"}))
-    
-    
-    
 
 def read_csv(csvfile):
     f = open(csvfile, 'r')
