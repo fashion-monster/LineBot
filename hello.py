@@ -289,21 +289,25 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif text == u'おすすめ':
-        f_path_tops = 'sumple'
-        f_path_bottoms = 'sumple'
-        line_bot_api.push_message(
-            'U4fce6cc2cc3530ae2f4b7ca0609edd40', [
-                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops,
-                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_tops),
-                ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms,
-                                 preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path_bottoms)
-            ]
-        )
+        r = (requests.get(url='http://127.0.0.1:9000'))
+         recommend = json.loads(str(r.text))
+         recommend = json.loads(str(recommend))
+         recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
+         recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"bottoms1"]
 
+         line_bot_api.reply_message(
+             event.reply_token, [
+                 ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_t,
+                                  preview_image_url='https://zoozoo-monster.work' + recommend_t),
+                 ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_b,
+                                  preview_image_url='https://zoozoo-monster.work' + recommend_b)
+             ]
+         )
 
     elif ('Tops' in text) or ('Bottoms' in text):
         # TODO:qをつかわない
         global_states = copy.deepcopy(q.queue)
+        request.get(url='')
         for state in global_states:
             if state[u'user_id'] != event.source.user_id:
                 continue
