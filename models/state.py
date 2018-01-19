@@ -29,11 +29,11 @@ class ActionState(State):
         self.next_action = next_action
 
     def to_dict(self):
-        return {'user_id': self.user_id,
-                'cloth_type': self.cloth_type,
-                'img_path': self.img_path,
-                'processing': self.processing,
-                "next_action": self.next_action}
+        return {u'user_id': self.user_id,
+                u'cloth_type': self.cloth_type,
+                u'img_path': self.img_path,
+                u'processing': self.processing,
+                u'next_action': self.next_action}
 
 
 class ResultState(State):
@@ -47,4 +47,6 @@ class ResultState(State):
         self.error_type = error_type
 
     def to_dict(self):
-        return {'user_id': self.user_id, 'message': self.message, 'error_type': self.error_type}
+        return {u'user_id': self.user_id,
+                u'message': self.message,
+                u'error_type': self.error_type}

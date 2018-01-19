@@ -2,3 +2,6 @@ seacret_key.py
 .idea
 .DS_Store
 node_modules
+test_server.py
+test_client.py
+test2_server.py
