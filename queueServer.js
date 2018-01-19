@@ -65,9 +65,7 @@ app.post('/',(req,res)=>{
             ...options,
             url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
             body:{...queue.queue[0]}
-          },()=>{
-          console.log("processing request Done");
-        })
+          })
       }
       console.log("image:")
       console.log(queue.queue)
@@ -81,8 +79,6 @@ app.post('/',(req,res)=>{
           ...options,
           url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
           body:{...queue.queue[0]}
-        },()=>{
-          console.log("processing request Done");
         });
       }
       console.log("processing:")
