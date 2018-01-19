@@ -4,7 +4,7 @@ import numpy as np
 
 import itertools
 
-def decleaseColor(val):
+def declease_color(val):
     if val < 64:
         return 32
     elif val < 128:
@@ -28,15 +28,15 @@ def posterize_image(src_img):
             g = src_img.item(h, w, 1)
             r = src_img.item(h, w, 2)
 
-            output_image.itemset((h, w, 0), decleaseColor(b))
-            output_image.itemset((h, w, 1), decleaseColor(g))
-            output_image.itemset((h, w, 2), decleaseColor(r))
+            output_image.itemset((h, w, 0), declease_color(b))
+            output_image.itemset((h, w, 1), declease_color(g))
+            output_image.itemset((h, w, 2), declease_color(r))
 
     return output_image
 
 
 # ２枚の画像から色の類似度を返す
-def calculateColorSimilarity(posterize_clothe_img, rank_img_path):
+def calculate_color_similarity(posterize_clothe_img, rank_img_path):
     rank_img = cv2.imread("tmp/cropped/" + str(rank_img_path))
     if rank_img is None:
         return 0
