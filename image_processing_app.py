@@ -11,8 +11,8 @@ import time
 import cv2
 import numpy
 
-app = Flask(__name__)
 
+app = Flask(__name__)
 
 @app.route("/resize", methods=['POST'])
 def resize():
@@ -53,15 +53,11 @@ def pick():
 
     return response
 
-
 @app.route("/similarity", methods=['POST'])
 def similarity():
     """
     画像名から２枚の画像の類似度を返す
     """
-    start = time.time()
-
-    
     f = open('all_pattern_of_Similarity2.csv', 'a')
     writer = csv.writer(f, lineterminator='\n')
 
@@ -93,10 +89,6 @@ def similarity():
     response = make_response()
     response.data = json.dumps({"write_csv": "done"})
     response.headers["Content-Type"] = "application/json"
-
-    elapsed_time = time.time() - start
-    print (elapsed_time)
-    
     
     return response
 
