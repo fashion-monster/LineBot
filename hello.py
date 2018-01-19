@@ -300,6 +300,7 @@ def confirm_message(event):
             ]
         )
 
+
     elif ('Tops' in text) or ('Bottoms' in text):
         # TODO:qをつかわない
         global_states = copy.deepcopy(q.queue)
