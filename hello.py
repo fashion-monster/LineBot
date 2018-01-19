@@ -135,7 +135,7 @@ def image_message(event):
     Returns:
 
     """
-    request.get(url='http://127.0.0.1:5001')
+    requests.get(url='http://127.0.0.1:5001')
 
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
@@ -242,7 +242,7 @@ def confirm_message(event):
 
     """
     text = event.message.text
-    request.get(url='http://127.0.0.1:5001')
+    requests.get(url='http://127.0.0.1:5001')
     # textがconfirmなら2択表示
     if text == 'confirm':
         confirm_template = ConfirmTemplate(text='Do it?', actions=[
