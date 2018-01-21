@@ -20,6 +20,7 @@ from linebot.models import (
 )
 
 import utils.weather as weather
+from models.state import ActionState
 
 app = Flask(__name__)
 file_path = "./image"
@@ -135,7 +136,7 @@ def image_message(event):
     Returns:
 
     """
-    queue = requests.get(url='http://127.0.0.1:5001')
+    queue = json.loads(requests.get(url='http://127.0.0.1:5001').text)
 
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
@@ -150,26 +151,35 @@ def image_message(event):
 
         d = json.loads(queue)
         for state in d['queue']:
-            if state[u'user_id'] != event.source.user_id:
+            if state['user_id'] != event.source.user_id:
                 continue
             else:
-                if state[u'img_path'] is None:
+                if (state['img_path'] is None)or (state[u'img_path'] is None):
                     # CSVに書く作業
-                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state[u'text'])]
+                    type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state['cloth_type'])]
                     with open('clothe_types.csv', 'a') as f:
                         writer = csv.writer(f, lineterminator='\n')
                         writer.writerow(type_list)
                     # Qに送る
                     header = {'content-type': 'application/json'}
-                    data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path,
-                            "action": 'image'}
-                    requests.post(url='http://127.0.0.1:5001', headers=header, data=data)
+                    # data = {'user_id': event.source.user_id, 'cloth_type': state[u'cloth_type'], 'img_path': f_path,
+                    #         "action": 'image'}
+                    data = ActionState(user_id=event.source.user_id,
+                                       cloth_type=state['cloth_type'],
+                                       img_path=f_path,
+                                       action='image',
+                                       processing=ActionState.processing_state['busy']).to_dict()
+                    requests.post(url='http://127.0.0.1:5001', headers=header, data=json.dumps(data))
                     return True
 
                 else:
                     line_bot_api.reply_message(
                         event.reply_token,
+<<<<<<< HEAD
                         TextSendMessage(text='トップスかボトムスを選択してください')
+=======
+                        TextSendMessage('トップスかボトムスを選択してください')
+>>>>>>> fecf597ed63454740726619ca2eafa8ceff1f25d
                     )
                     return False
 
@@ -242,7 +252,9 @@ def confirm_message(event):
 
     """
     text = event.message.text
-    queue = requests.get(url='http://127.0.0.1:5001')
+    queue = json.loads(requests.get(url='http://127.0.0.1:5001').text)
+
+
     # textがconfirmなら2択表示
     if text == 'confirm':
         confirm_template = ConfirmTemplate(text='Do it?', actions=[
@@ -313,11 +325,12 @@ def confirm_message(event):
             if state[u'user_id'] != event.source.user_id:
                 continue
             else:
-                if state[u'img_path'] is None:
+                if state['img_path'] is None or state['img_path'] == "":
                     # 連続で文字送信
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=state[u'cloth_type'] + 'の画像を送信後この操作が行えます')
+                        # TextSendMessage(text=state['cloth_type'] + 'の画像を送信後この操作が行えます')
+                        TextSendMessage(text='の画像を送信後この操作が行えます')
                     )
                     return False
 
@@ -325,25 +338,33 @@ def confirm_message(event):
                     # 画像加工待ちのユーザー操作
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=text + 'の画像を送信してください')
+                        TextSendMessage(text='の画像を送信してください')
                     )
                     # Qに送る
                     # アクションステート使って
                     header = {'content-type': 'application/json'}
-                    data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',
-                            "action": 'text'}
-                    requests.post(url='http://127.0.0.1:5001', headers=header, data=data)
+                    # data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '',
+                    #         "action": 'text'}
+                    data = ActionState(user_id=event.source.user_id,
+                                       cloth_type=text,
+                                       img_path='',
+                                       action='text',
+                                       processing=ActionState.processing_state['busy']).to_dict()
+                    requests.post(url='http://127.0.0.1:5001', headers=header, data=json.dumps(data))
                     return True
         # 新規の正しいユーザー操作
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=text + 'の画像を送信してください')
+            TextSendMessage(text='の画像を送信してください')
         )
         # Qに送る
         header = {'content-type': 'application/json'}
-        data = {'user_id': event.source.user_id, 'cloth_type': text, 'img_path': '', "action": 'text'}
-
-        requests.post(url='http://127.0.0.1:5001', headers=header, data=data)
+        data = ActionState(user_id=event.source.user_id,
+                           cloth_type=text,
+                           img_path='',
+                           processing='',
+                           action='text').to_dict()
+        requests.post(url='http://127.0.0.1:5001', headers=header, data=json.dumps(data))
         return True
 
     elif ':Tops' in text:
