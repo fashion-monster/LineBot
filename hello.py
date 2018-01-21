@@ -114,16 +114,29 @@ def handle_follow(event):
 
 
 # フォロー解除イベント
-# @handler.add(UnfollowEvent)
-# def handle_unfollow(event):
-#    userid = event.source.user_id
-#    with open('follower.csv', 'r') as f:
-#        readers = csv.reader(f)
-#        readers.remove(userid)
-#    with open('follower.csv', 'a') as f:
-#        writer = csv.writer(f, lineterminator='\n')
-#        for reader in readers:
-#            writer.writerow(reader)
+@handler.add(UnfollowEvent)
+def handle_unfollow(event):
+    userid = event.source.user_id
+    listData = []
+    f = open ('follower.csv', 'r')
+    readers = csv.reader(f)
+    readers = csv.reader(f)
+    for row in readers:
+        if userid in row:
+            row.remove(userid)
+        listData.append(row)
+
+   #上書き
+    with open('follower.csv', 'w') as q:
+        writer = csv.writer(q, lineterminator='\n')
+        for row in readers:
+            writer.writerow(row)
+
+    with open('follower.csv', 'a') as q:
+        writer = csv.writer(q, lineterminator='\n')
+        for row1 in listData:
+            writer.writerow(row1)
+    f.close()
 
 
 @handler.add(MessageEvent, message=ImageMessage)
@@ -300,10 +313,9 @@ def confirm_message(event):
         #user_idを廖氏度算出にpost
         header = {'content-type': 'application/json'}
         data = ActionState(user_id=event.source.user_id).to_dict()
-        requests.post(url='http://127.0.0.1:9000', headers=header, data=json.dumps(data))
+        r = requests.post(url='http://127.0.0.1:9000', headers=header, data=json.dumps(data))
 
         #類似度算出後の画像セットを送信
-        r = (requests.post(url='http://127.0.0.1:9000'))
         recommend = json.loads(str(r.text))
         recommend = json.loads(str(recommend))
         recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
