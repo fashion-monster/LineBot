@@ -176,6 +176,7 @@ def image_message(event):
                     return True
 
                 except Exception as e:
+                    print(str(e))
                     line_bot_api.reply_message(
                         event.reply_token,
                         TextSendMessage(text='トップスかボトムスを選択してください')
