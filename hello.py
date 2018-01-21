@@ -175,11 +175,7 @@ def image_message(event):
                 else:
                     line_bot_api.reply_message(
                         event.reply_token,
-<<<<<<< HEAD
                         TextSendMessage(text='トップスかボトムスを選択してください')
-=======
-                        TextSendMessage('トップスかボトムスを選択してください')
->>>>>>> fecf597ed63454740726619ca2eafa8ceff1f25d
                     )
                     return False
 
@@ -300,8 +296,8 @@ def confirm_message(event):
     elif text == u'おすすめ':
         #user_idを廖氏度算出にpost
         header = {'content-type': 'application/json'}
-        data = {'user_id': event.source.user_id}
-        requests.post(url='http://127.0.0.1:5001', headers=header, data=data)
+        data = ActionState(user_id=event.source.user_id).to_dict()
+        requests.post(url='http://127.0.0.1:5001', headers=header, data=json.dumps(data))
 
         #類似度算出後の画像セットを送信
         r = (requests.get(url='http://127.0.0.1:9000'))
