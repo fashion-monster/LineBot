@@ -116,22 +116,21 @@ def handle_follow(event):
 # フォロー解除イベント
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
-    userid = event.source.user_id
+    userid = event.source.user_id #フォロー解除したユーザのID
     listData = []
+    #csv読み込み開始
     f = open ('follower.csv', 'r')
     readers = csv.reader(f)
-    readers = csv.reader(f)
     for row in readers:
-        if userid in row:
-            row.remove(userid)
-        listData.append(row)
-
-   #上書き
+        #フォロー解除したユーザ以外のIDをlistDataに
+        if userid not in row:
+            listData.append(row)
+   #上書き処理　csvの初期化
     with open('follower.csv', 'w') as q:
         writer = csv.writer(q, lineterminator='\n')
         for row in readers:
             writer.writerow(row)
-
+    #listDataをcsvに書き込み
     with open('follower.csv', 'a') as q:
         writer = csv.writer(q, lineterminator='\n')
         for row1 in listData:
