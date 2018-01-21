@@ -317,8 +317,8 @@ def confirm_message(event):
         #類似度算出後の画像セットを送信
         recommend = json.loads(str(r.text))
         recommend = json.loads(str(recommend))
-        recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
-        recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"bottoms1"]
+        recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"Tops"]
+        recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"Bottoms"]
 
         line_bot_api.reply_message(
             event.reply_token, [
