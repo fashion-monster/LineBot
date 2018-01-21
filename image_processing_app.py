@@ -1,15 +1,13 @@
 # coding=utf-8
-from flask import Flask, request, Response
+import csv
+import json
+
+import cv2
+import requests
+from flask import Flask, request
+
 from utils.calculate_color_similarity import calculate_color_similarity
 from utils.calculate_color_similarity import posterize_image
-
-import json
-import csv
-import time
-import cv2
-import numpy
-import requests
-from models.state import ActionState
 
 app = Flask(__name__)
 
@@ -48,18 +46,16 @@ def similarity():
 
     f.close()
     header = {'content-type': 'application/json'}
-    requests.post(url='http://127.0.0.1:5001/img_process_queue',header=header, data=(json.dumps({"action": "similarity"})))
+    requests.post(url='http://127.0.0.1:5001/img_process_queue',
+                  header=header,
+                  data=(json.dumps({"action": "similarity"})))
     return
 
 
-def read_csv(csvfile):
-    f = open(csvfile, 'r')
-
+def read_csv(csv_file):
+    f = open(csv_file, 'r')
     reader = csv.reader(f)
-    header = next(reader)
-
     data = [r for r in reader]
-
     f.close()
     return data
 
