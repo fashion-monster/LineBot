@@ -47,7 +47,8 @@ def similarity():
                 writer.writerow([user_id, user_cloth, ranking_bottoms, user_cloth_type, year, month, rank, simi])
 
     f.close()
-    requests.post(url='http://127.0.0.1:5001/img_process_queue', data=(json.dumps({"action": "similarity"})))
+    header = {'content-type': 'application/json'}
+    requests.post(url='http://127.0.0.1:5001/img_process_queue',header=header, data=(json.dumps({"action": "similarity"})))
     return
 
 
