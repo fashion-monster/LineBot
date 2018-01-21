@@ -136,25 +136,27 @@ def image_message(event):
     Returns:
 
     """
-    queue = json.loads(requests.get(url='http://127.0.0.1:5001').text)
-
     msg_id = event.message.id
     message_content = line_bot_api.get_message_content(msg_id)
-    f_path = '/tmp/' + msg_id + '.jpg'
-    try:
-        with open('.' + f_path, 'wb') as fd:
-            for chunk in message_content.iter_content():
-                fd.write(chunk)
-        print(f_path)
-        header = {'content-type': 'application/json'}
-        print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
+    d = json.loads(json.loads(requests.get(url='http://127.0.0.1:5001').text))  # queue
+    # 今までのキューを全部見る
+    for state in d['queue']:
+        if state['user_id'] != event.source.user_id:
+            continue  # 1
+        else:
+            if (state['img_path'] is None)or (state[u'img_path'] is None):  # 正常な流れ
+                try:
+                    # 画像加工へ流す
+                    f_path = '/tmp/' + msg_id + '.jpg'
+                    with open('.' + f_path, 'wb') as fd:
+                        for chunk in message_content.iter_content():
+                            fd.write(chunk)
+                    print(f_path)
+                    header = {'content-type': 'application/json'}
 
-        d = json.loads(queue)
-        for state in d['queue']:
-            if state['user_id'] != event.source.user_id:
-                continue
-            else:
-                if (state['img_path'] is None)or (state[u'img_path'] is None):
+                    # 同期的なのでどうにかした方がいいかも
+                    print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
+
                     # CSVに書く作業
                     type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state['cloth_type'])]
                     with open('clothe_types.csv', 'a') as f:
@@ -169,31 +171,33 @@ def image_message(event):
                                        img_path=f_path,
                                        action='image',
                                        processing=ActionState.processing_state['busy']).to_dict()
+                    # FIXME: ここも同期的なので変更したい
                     requests.post(url='http://127.0.0.1:5001', headers=header, data=json.dumps(data))
                     return True
 
-                else:
+                except Exception as e:
+                    print(str(e))
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text='トップスかボトムスを選択してください')
+                        TextSendMessage(text='先にトップスかボトムスを選択してください')
                     )
                     return False
-
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='トップスかボトムスを選択してください')
-        )
-        return False
+        # 1
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text='トップスかボトムスを選択してください')
+    )
+    return False
     #        line_bot_api.reply_message(
     #            event.reply_token,
     #            ImageSendMessage(original_content_url='https://fashion.zoozoo-monster-pbl.work' + f_path,
     #                             preview_image_url='https://fashion.zoozoo-monster-pbl.work' + f_path)
     #        )
-    except IOError:
-        raise IOError
-    except:
-        import traceback
-        traceback.print_exc()
+    # except IOError:
+    #     raise IOError
+    # except:
+    #     import traceback
+    #     traceback.print_exc()
 
 
 @handler.add(MessageEvent, message=LocationMessage)
@@ -249,7 +253,6 @@ def confirm_message(event):
     """
     text = event.message.text
     queue = json.loads(requests.get(url='http://127.0.0.1:5001').text)
-
 
     # textがconfirmなら2択表示
     if text == 'confirm':
