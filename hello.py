@@ -300,7 +300,7 @@ def confirm_message(event):
         requests.post(url='http://127.0.0.1:9000', headers=header, data=json.dumps(data))
 
         #類似度算出後の画像セットを送信
-        r = (requests.get(url='http://127.0.0.1:9000'))
+        r = (requests.post(url='http://127.0.0.1:9000'))
         recommend = json.loads(str(r.text))
         recommend = json.loads(str(recommend))
         recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
