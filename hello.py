@@ -179,7 +179,7 @@ def image_message(event):
                     print(str(e))
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text='トップスかボトムスを選択してください')
+                        TextSendMessage(text='先にトップスかボトムスを選択してください')
                     )
                     return False
         # 1
