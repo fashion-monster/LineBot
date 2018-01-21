@@ -36,7 +36,6 @@ app.post('/',(req,res)=>{
   res.setHeader('Content-Type', 'application/json');
   res.json('{"message":"OK"}');
   // 実際のAPI部分
-  console.log(req.body)
   if(req.body.action === ACTION_MESSAGE_TEXT){
     // TopsかBottomsのメッセージがきた時、queueに新規で追加
     
@@ -64,11 +63,11 @@ app.post('/',(req,res)=>{
         request({
             ...options,
             url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
-            body:{...queue.queue[0]}
+            body:JSON.stringify(queue.queue[0])
           })
       }
       console.log("image:")
-      console.log(queue.queue)
+      console.log(queue.queue[0])
     }
     else if(req.body.action === ACTION_IMAGE_PROCESSING){
       // 画像処理が終了した時
@@ -78,7 +77,7 @@ app.post('/',(req,res)=>{
         request({
           ...options,
           url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
-          body:{...queue.queue[0]}
+          body:JSON.stringify(queue.queue[0])
         });
       }
       console.log("processing:")

@@ -21,7 +21,6 @@ def similarity():
     """
     f = open('all_pattern_of_Similarity2.csv', 'a')
     writer = csv.writer(f, lineterminator='\n')
-    res = Response()
 
     ranking_data = read_csv("tools/ranking.csv")
 
@@ -50,9 +49,7 @@ def similarity():
     f.close()
     header = {'content-type': 'application/json'}
     requests.post(url='http://127.0.0.1:5001/img_process_queue',header=header, data=(json.dumps({"action": "similarity"})))
-    res.status_code = 200
-    res.data = 'DONE'
-    return res
+    return
 
 
 def read_csv(csvfile):
