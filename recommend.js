@@ -25,22 +25,22 @@ function recommend(){
     // ランクごとのリスト作成
     let rankList = {}
     for(let i=1;i<res.length-1;i++){
-        if(!rankList.hasOwnProperty(res[i][4])){
-            rankList[res[i][4]] = [
+        if(!rankList.hasOwnProperty(res[i][6])){
+            rankList[res[i][6]] = [
                 {
                     'user':res[i][1],
                     'target':res[i][2],
                     'type':res[i][3],
-                    'sim':res[i][5]
+                    'sim':res[i][7]
                 }
             ];
         }
         else{
-            rankList[res[i][4]].push({
+            rankList[res[i][6]].push({
                 'user': res[i][1],
                 'target': res[i][2],
                 'type': res[i][3],
-                'sim': res[i][5]
+                'sim': res[i][7]
             });
         }
     }
@@ -99,9 +99,7 @@ function recommend(){
     let result = {};
     for(let row in preResult){
         result[row]={
-            tops:{
-
-            },
+            tops:{},
             bottoms:{},
             sim:1
         }
@@ -167,6 +165,7 @@ function recommend(){
             form.rank = key;
             let i = 1;
             for(let index in result[key].tops){
+              console.log(index)
                 // index -> モデル画像ID
                 form['topsModel'+i]=index;
                 // resul[key].top[index].user ->ユーザクローゼット
