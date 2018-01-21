@@ -297,7 +297,7 @@ def confirm_message(event):
         #user_idを廖氏度算出にpost
         header = {'content-type': 'application/json'}
         data = ActionState(user_id=event.source.user_id).to_dict()
-        requests.post(url='http://127.0.0.1:5001', headers=header, data=json.dumps(data))
+        requests.post(url='http://127.0.0.1:9000', headers=header, data=json.dumps(data))
 
         #類似度算出後の画像セットを送信
         r = (requests.get(url='http://127.0.0.1:9000'))
