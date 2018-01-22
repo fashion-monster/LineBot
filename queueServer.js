@@ -72,7 +72,7 @@ app.post('/',(req,res)=>{
       // 画像処理が終了した時,デキューする
       queue.queue.shift();
       // デキューしたあとキューが残ってるかどうか
-      if(queue.queue.length !== 0){
+      if(queue.queue.length !== 0 && queue.queue[0].img_path === null){
         // 残ってたら先頭のキューをbusyにして画像処理サーバにPOSTする
         queue.queue[0].processing = PROCESSING_STATE_BUSY;
         request({
