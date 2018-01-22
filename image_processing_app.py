@@ -31,10 +31,6 @@ def similarity():
     user_cloth_img = cv2.imread("tmp/cropped/" + str(user_cloth))
     posterize_user_cloth_image = posterize_image(user_cloth_img)
 
-<<<<<<< HEAD
-=======
-    next(ranking_data)
->>>>>>> f0c46b668c89192812e61e68be9fd3c9146ea452
     for r in ranking_data:
 
         year = r[0]
