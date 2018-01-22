@@ -162,11 +162,10 @@ def image_message(event):
                     with open('.' + f_path, 'wb') as fd:
                         for chunk in message_content.iter_content():
                             fd.write(chunk)
-                    print(f_path)
                     header = {'content-type': 'application/json'}
 
                     # 同期的なのでどうにかした方がいいかも
-                    print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
+                    print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=msg_id+'.jpg'))
 
                     # CSVに書く作業
                     type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state['cloth_type'])]
