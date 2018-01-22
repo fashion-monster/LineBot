@@ -1,6 +1,5 @@
 # coding=utf-8
 import Queue
-import copy
 import csv
 import json
 import os
@@ -15,7 +14,7 @@ from linebot.exceptions import (
 )
 from linebot.models import (
     ImageSendMessage, FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, LocationMessage,
-    ConfirmTemplate,
+    ConfirmTemplate, UnfollowEvent,
     MessageTemplateAction, TemplateSendMessage, ButtonsTemplate, URITemplateAction, PostbackTemplateAction
 )
 
@@ -114,16 +113,28 @@ def handle_follow(event):
 
 
 # フォロー解除イベント
-# @handler.add(UnfollowEvent)
-# def handle_unfollow(event):
-#    userid = event.source.user_id
-#    with open('follower.csv', 'r') as f:
-#        readers = csv.reader(f)
-#        readers.remove(userid)
-#    with open('follower.csv', 'a') as f:
-#        writer = csv.writer(f, lineterminator='\n')
-#        for reader in readers:
-#            writer.writerow(reader)
+@handler.add(UnfollowEvent)
+def handle_unfollow(event):
+    user_id = event.source.user_id  # フォロー解除したユーザのID
+    list_data = []
+    # csv読み込み開始
+    f = open('follower.csv', 'r')
+    readers = csv.reader(f)
+    for row in readers:
+        # フォロー解除したユーザ以外のIDをlistDataに
+        if user_id not in row:
+            list_data.append(row)
+    # 上書き処理　csvの初期化
+    with open('follower.csv', 'w') as q:
+        writer = csv.writer(q, lineterminator='\n')
+        for row in readers:
+            writer.writerow(row)
+    # listDataをcsvに書き込み
+    with open('follower.csv', 'a') as q:
+        writer = csv.writer(q, lineterminator='\n')
+        for row1 in list_data:
+            writer.writerow(row1)
+    f.close()
 
 
 @handler.add(MessageEvent, message=ImageMessage)
@@ -144,7 +155,7 @@ def image_message(event):
         if state['user_id'] != event.source.user_id:
             continue  # 1
         else:
-            if (state['img_path'] is None)or (state[u'img_path'] is None):  # 正常な流れ
+            if (state['img_path'] is None) or (state[u'img_path'] is None):  # 正常な流れ
                 try:
                     # 画像加工へ流す
                     f_path = '/tmp/' + msg_id + '.jpg'
@@ -297,7 +308,12 @@ def confirm_message(event):
             TextSendMessage(text=test_text)
         )
     elif text == u'おすすめ':
-        r = (requests.get(url='http://127.0.0.1:9000'))
+        # user_idを廖氏度算出にpost
+        header = {'content-type': 'application/json'}
+        data = {'user_id': event.source.user_id}
+        r = requests.post(url='http://127.0.0.1:9000', headers=header, data=json.dumps(data))
+
+        # 類似度算出後の画像セットを送信
         recommend = json.loads(str(r.text))
         recommend = json.loads(str(recommend))
         recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
@@ -306,14 +322,15 @@ def confirm_message(event):
         line_bot_api.reply_message(
             event.reply_token, [
                 ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_t,
-                                  preview_image_url='https://zoozoo-monster.work' + recommend_t),
+                                 preview_image_url='https://zoozoo-monster.work' + recommend_t),
                 ImageSendMessage(original_content_url='https://zoozoo-monster.work' + recommend_b,
-                                  preview_image_url='https://zoozoo-monster.work' + recommend_b)
+                                 preview_image_url='https://zoozoo-monster.work' + recommend_b)
             ]
         )
 
     elif ('Tops' in text) or ('Bottoms' in text):
         d = json.loads(queue)
+        text = text.encode('ascii')
         for state in d['queue']:
             if state[u'user_id'] != event.source.user_id:
                 continue
@@ -331,7 +348,7 @@ def confirm_message(event):
                     # 画像加工待ちのユーザー操作
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text='の画像を送信してください')
+                        TextSendMessage(text=text+'の画像を送信してください')
                     )
                     # Qに送る
                     # アクションステート使って
@@ -348,7 +365,7 @@ def confirm_message(event):
         # 新規の正しいユーザー操作
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='の画像を送信してください')
+            TextSendMessage(text=text+'の画像を送信してください')
         )
         # Qに送る
         header = {'content-type': 'application/json'}
