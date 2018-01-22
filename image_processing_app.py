@@ -31,8 +31,6 @@ def similarity():
     user_cloth_img = cv2.imread("tmp/cropped/" + str(user_cloth))
     posterize_user_cloth_image = posterize_image(user_cloth_img)
 
-    next(ranking_data)
-
     for r in ranking_data:
 
         year = r[0]
@@ -61,6 +59,7 @@ def similarity():
 def read_csv(csv_file):
     f = open(csv_file, 'r')
     reader = csv.reader(f)
+    next(reader)
     data = [r for r in reader]
     f.close()
     return data
