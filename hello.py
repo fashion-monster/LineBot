@@ -165,7 +165,7 @@ def image_message(event):
                     header = {'content-type': 'application/json'}
 
                     # 同期的なのでどうにかした方がいいかも
-                    print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=msg_id+'.jpg'))
+                    print(requests.post(url='http://127.0.0.1:9998/cloth_detect', headers=header, data=f_path))
 
                     # CSVに書く作業
                     type_list = [str(event.source.user_id), str(msg_id + '.jpg'), str(state['cloth_type'])]
@@ -178,7 +178,7 @@ def image_message(event):
                     #         "action": 'image'}
                     data = ActionState(user_id=event.source.user_id,
                                        cloth_type=state['cloth_type'],
-                                       img_path=f_path,
+                                       img_path=msg_id+'.jpg',
                                        action='image',
                                        processing=ActionState.processing_state['busy']).to_dict()
                     # FIXME: ここも同期的なので変更したい
