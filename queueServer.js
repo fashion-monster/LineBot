@@ -61,7 +61,7 @@ app.post('/',(req,res)=>{
         queue.queue[0].processing = PROCESSING_STATE_BUSY;
         request({
             ...options,
-            url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
+            url:'http://localhost:8050/similarity',
             body:JSON.stringify(queue.queue[0])
           })
       }
@@ -77,7 +77,7 @@ app.post('/',(req,res)=>{
         queue.queue[0].processing = PROCESSING_STATE_BUSY;
         request({
           ...options,
-          url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
+          url:'http://localhost:8050/similarity',
           body:JSON.stringify(queue.queue[0])
         });
       }
