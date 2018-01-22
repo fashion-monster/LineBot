@@ -1,189 +1,97 @@
-const express = require('express')
+const express = require('express');
+const fs = require('fs');
+const parser =  require('csv-parse/lib/sync');
+const BORDER_SIMILARITY = 0.5;
+const RECOMMEND_MAX_NUM = 10;
+const file = './all_pattern_of_Similarity2.csv';
+const fetch = require('node-fetch');
+const bodyParser = require('body-parser');
 const app = express();
-app.get('/', (req, res)=>{ 
+app.use(bodyParser.json());
+app.post('/', (req, res) => { 
     res.setHeader('Content-Type', 'application/json');
-    let response = recommend()
-    console.log(response)
-res.json(response)
+    let response = recommend(req.body.user_id);
+    res.json(response);
 });
 app.listen(9000);
 
 
-function recommend(){
-    const fs = require('fs');
-    const parser =  require('csv-parse/lib/sync');
-    
-    const BORDER_SIMILARITY = 0.5;
-    
-    const file = './all_pattern_of_Similarity2.csv';
-    const fetch = require('node-fetch');
+function recommend(userId){
+  // 最終的にこれを返す
+  const result = {
+    "recommend":[]
+  };
+  let rawCSV = fs.readFileSync(file);
+  let allSims = parser(rawCSV);
+  let simsArray = filterArrayByUserId(allSims,userId);
+  let userDict = buildUserDictBySimsArray(simsArray);
+  let sortedDict = sortUserDict(userDict);
+  result.recommend= [...buildRecomendationList(sortedDict)];
+  return JSON.stringify(result);
+}
 
-    let data = fs.readFileSync(file);
 
-    let res = parser(data);
+function filterArrayByUserId(array,userId){
+  return array.filter((data)=>{
+    if(userId === data[0]){
+      return true;
+    };
+  })
+}
 
-    // ランクごとのリスト作成
-    let rankList = {}
-    for(let i=1;i<res.length-1;i++){
-        if(!rankList.hasOwnProperty(res[i][6])){
-            rankList[res[i][6]] = [
-                {
-                    'user':res[i][1],
-                    'target':res[i][2],
-                    'type':res[i][3],
-                    'sim':res[i][7]
-                }
-            ];
-        }
-        else{
-            rankList[res[i][6]].push({
-                'user': res[i][1],
-                'target': res[i][2],
-                'type': res[i][3],
-                'sim': res[i][7]
-            });
-        }
-    }
+function buildUserDictBySimsArray(simsArray){
+  let userObjList = [];
+  simsArray.map((data)=>{
+    userObjList.push({
+      "userImagePath":data[1],
+      "modelImagePath":data[2],
+      "type":data[3],
+      "rank":data[6],
+      "sim":data[7]
+    });
+  });
+  return userObjList;
+}
 
-    let preResult = {}
-    for(row in rankList){
-        for(data of rankList[row]){
-            if (!preResult.hasOwnProperty(row)) {
-                preResult[row] = {
-                    tops: {},
-                    bottoms:{}
-                }
-                if(data.type === "Tops"){
-                    preResult[row].tops[data.target] = [{
-                        'user': data.user,
-                        'sim': data.sim
-                    }]
-                }else if (data.type === "Bottoms"){
-                    preResult[row].bottoms[data.target] = [{
-                        'user': data.user,
-                        'sim': data.sim
-                    }]
-                }
-            }
-            else{
-                if (data.type === "Tops") {
-                    if (preResult[row].tops[data.target]){
-                        preResult[row].tops[data.target].push({
-                            'user': data.user,
-                            'sim': data.sim
-                        })
-                    }
-                    else{
-                        preResult[row].tops[data.target]=[{
-                            'user': data.user,
-                            'sim': data.sim
-                        }]
-                    }
-                } else if (data.type === "Bottoms") {
-                    if (preResult[row].bottoms[data.target]) {
-                        preResult[row].bottoms[data.target].push({
-                            'user': data.user,
-                            'sim': data.sim
-                        })
-                    }
-                    else {
-                        preResult[row].bottoms[data.target] = [{
-                            'user': data.user,
-                            'sim': data.sim
-                        }]
-                    }
-                }
-            }
-        }
+function sortUserDict(userDict){
+  let score = userDict.map((data)=>{
+    data.score = (100 - parseInt(data.rank)) * parseFloat(data.sim);
+  })
+  userDict.sort((a,b)=>{
+    return a.score < b.score ? 1 : -1;
+  })
+  return {
+    "Tops":[
+      ...userDict.filter((data)=>data.type === 'Tops')
+  ],
+    "Bottoms":[
+      ...userDict.filter((data)=>data.type === 'Bottoms')
+    ]
+  };
+}
+
+function buildRecomendationList(sortedList){
+  let recommend_max_num = RECOMMEND_MAX_NUM;
+  if(RECOMMEND_MAX_NUM > sortedList.Tops.length 
+    || RECOMMEND_MAX_NUM > sortedList.Bottoms.length){
+      recommend_max_num = Math.min([sortedList.Tops.length,sortedList.Bottoms.length]);
     }
-    let result = {};
-    for(let row in preResult){
-        result[row]={
-            tops:{},
-            bottoms:{},
-            sim:1
+    let recommendList=[];
+    console.log(sortedList)
+    sortedList.Tops.some((top)=>{
+      if(recommendList.length === recommend_max_num){
+        return true;
+      }
+      sortedList.Bottoms.some((bottom)=>{
+        if(top.rank === bottom.rank){
+          recommendList.push({
+            "Tops":top.userImagePath,
+            "Bottoms":bottom.userImagePath,
+            "score":top.score+bottom.score
+          })
+          return true;
         }
-        for(let val in preResult[row].tops){
-            Object.keys(preResult[row].tops).map((key)=>{
-                let maxSimClName = {};
-                let maxSim = Math.max(...preResult[row].tops[key].map((o) => {
-                    maxSimClName[o.user] = o.sim;
-                    return o.sim;
-                }))
-                let bestMatch = Object.keys(maxSimClName).filter((key) => {
-                    return maxSimClName[key] == maxSim
-                });
-                result[row].tops[key] = {
-                    user:bestMatch[0],
-                    sim:maxSim
-                };
-                result[row].sim = result[row].sim * maxSim
-            }) 
-        }
-        for (let val in preResult[row].bottoms) {
-            Object.keys(preResult[row].bottoms).map((key) => {
-                let maxSimClName = {};
-                let maxSim = Math.max(...preResult[row].bottoms[key].map((o) => {
-                    maxSimClName[o.user] = o.sim;
-                    return o.sim;
-                }))
-                let bestMatch = Object.keys(maxSimClName).filter((key) => {
-                    return maxSimClName[key] == maxSim
-                });
-                result[row].bottoms[key] = {
-                    user: bestMatch[0],
-                    sim: maxSim
-                };
-                result[row].sim = result[row].sim * maxSim
-            })        
-        }
-    }
-    let recommend=[];
-    for(let row in result){
-        let obj = {};
-        obj[row] = result[row].sim;
-        recommend.push(obj)
-    }
-    let recRes = recommend.filter((key)=>{
-        for(let row in key){
-            if(key[row]>BORDER_SIMILARITY)
-                return key
-            else
-                return
-        }
+      })
     })
-    let formWrapper=[]
-    let form = {};
-    let jsonResult = {
-        "recommend":[]
-    }
-    for(let row of recRes){
-        for(let key in row){
-            
-            form ={};
-            // key -> ランキング番号
-            form.rank = key;
-            let i = 1;
-            for(let index in result[key].tops){
-              console.log(index)
-                // index -> モデル画像ID
-                form['topsModel'+i]=index;
-                // resul[key].top[index].user ->ユーザクローゼット
-                form['tops' + i] = result[key].tops[index].user
-                i++;
-            }
-            i = 1;
-            for (let index in result[key].bottoms) {
-                // index -> モデル画像ID
-                form['bottomsModel' + i] = index;
-                // resul[key].top[index].user ->ユーザクローゼット
-                form['bottoms' + i] = result[key].bottoms[index].user
-                i++;
-            }
-            if (form.hasOwnProperty('tops1') && form.hasOwnProperty('bottoms1'))
-                formWrapper.push(form)
-        }
-    }    
-    jsonResult.recommend = formWrapper
-    return JSON.stringify(jsonResult)
+    return recommendList;
 }
