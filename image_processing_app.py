@@ -22,9 +22,11 @@ def similarity():
 
     ranking_data = read_csv("tools/ranking.csv")
 
-    user_id = request.form["user_id"]
-    user_cloth = request.form["img_path"]
-    user_cloth_type = request.form["cloth_type"]
+    res_json = json.loads(request.data.decode("UTF-8"))
+
+    user_id = res_json["user_id"]
+    user_cloth = res_json["img_path"]
+    user_cloth_type = res_json["cloth_type"]
 
     user_cloth_img = cv2.imread("tmp/cropped/" + str(user_cloth))
     posterize_user_cloth_image = posterize_image(user_cloth_img)
@@ -45,11 +47,13 @@ def similarity():
                 writer.writerow([user_id, user_cloth, ranking_bottoms, user_cloth_type, year, month, rank, simi])
 
     f.close()
-    header = {'content-type': 'application/json'}
-    requests.post(url='http://127.0.0.1:5001/img_process_queue',
-                  header=header,
+
+    header = {'Content-Type':'application/json'}
+    requests.post(url='http://127.0.0.1:5001/',
+                  headers=header,
                   data=(json.dumps({"action": "similarity"})))
-    return
+    
+    return "ok"
 
 
 def read_csv(csv_file):
