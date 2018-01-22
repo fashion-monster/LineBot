@@ -69,7 +69,7 @@ app.post('/',(req,res)=>{
       console.log(queue.queue)
     }
     else if(req.body.action === ACTION_IMAGE_PROCESSING){
-      // 画像処理が終了した時
+      // 画像処理が終了した時,デキューする
       queue.queue.shift();
       // デキューしたあとキューが残ってるかどうか
       if(queue.queue.length !== 0){
