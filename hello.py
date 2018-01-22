@@ -310,7 +310,7 @@ def confirm_message(event):
     elif text == u'おすすめ':
         # user_idを廖氏度算出にpost
         header = {'content-type': 'application/json'}
-        data = ActionState(user_id=event.source.user_id).to_dict()
+        data = {'user_id': event.source.user_id}
         r = requests.post(url='http://127.0.0.1:9000', headers=header, data=json.dumps(data))
 
         # 類似度算出後の画像セットを送信
@@ -330,6 +330,7 @@ def confirm_message(event):
 
     elif ('Tops' in text) or ('Bottoms' in text):
         d = json.loads(queue)
+        text = text.encode('ascii')
         for state in d['queue']:
             if state[u'user_id'] != event.source.user_id:
                 continue
@@ -347,7 +348,7 @@ def confirm_message(event):
                     # 画像加工待ちのユーザー操作
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text='の画像を送信してください')
+                        TextSendMessage(text=text+'の画像を送信してください')
                     )
                     # Qに送る
                     # アクションステート使って
@@ -364,7 +365,7 @@ def confirm_message(event):
         # 新規の正しいユーザー操作
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='の画像を送信してください')
+            TextSendMessage(text=text+'の画像を送信してください')
         )
         # Qに送る
         header = {'content-type': 'application/json'}
