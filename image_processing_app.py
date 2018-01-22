@@ -32,7 +32,6 @@ def similarity():
     posterize_user_cloth_image = posterize_image(user_cloth_img)
 
     next(ranking_data)
-
     for r in ranking_data:
 
         year = r[0]

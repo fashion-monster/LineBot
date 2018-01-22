@@ -162,7 +162,6 @@ def image_message(event):
                     with open('.' + f_path, 'wb') as fd:
                         for chunk in message_content.iter_content():
                             fd.write(chunk)
-                    print(f_path)
                     header = {'content-type': 'application/json'}
 
                     # 同期的なのでどうにかした方がいいかも
@@ -179,7 +178,7 @@ def image_message(event):
                     #         "action": 'image'}
                     data = ActionState(user_id=event.source.user_id,
                                        cloth_type=state['cloth_type'],
-                                       img_path=f_path,
+                                       img_path=msg_id+'.jpg',
                                        action='image',
                                        processing=ActionState.processing_state['busy']).to_dict()
                     # FIXME: ここも同期的なので変更したい
@@ -316,8 +315,8 @@ def confirm_message(event):
         # 類似度算出後の画像セットを送信
         recommend = json.loads(str(r.text))
         recommend = json.loads(str(recommend))
-        recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"tops1"]
-        recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"bottoms1"]
+        recommend_t = '/tmp/cropped/' + recommend["recommend"][0][u"Tops"]
+        recommend_b = '/tmp/cropped/' + recommend["recommend"][0][u"Bottoms"]
 
         line_bot_api.reply_message(
             event.reply_token, [
