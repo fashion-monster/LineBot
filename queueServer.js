@@ -38,7 +38,6 @@ app.post('/',(req,res)=>{
   // 実際のAPI部分
   if(req.body.action === ACTION_MESSAGE_TEXT){
     // TopsかBottomsのメッセージがきた時、queueに新規で追加
-    
     queue.queue.push({
         "user_id":req.body.user_id,
         "cloth_type":req.body.cloth_type,
@@ -48,8 +47,8 @@ app.post('/',(req,res)=>{
       })
     console.log("text:")
     console.log(queue.queue)
-    }
-    else if(req.body.action === ACTION_MESSAGE_IMAGE){
+  }
+  else if(req.body.action === ACTION_MESSAGE_IMAGE){
       // 画像が送られてきたら、送信者の最新のqueueに画像のパスを追加する
       for(let i = queue.queue.length-1;i>=0;i--){
         if(queue.queue[i].user_id === req.body.user_id){
@@ -62,21 +61,23 @@ app.post('/',(req,res)=>{
         queue.queue[0].processing = PROCESSING_STATE_BUSY;
         request({
             ...options,
-            url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
+            url:'http://localhost:8050/similarity',
             body:JSON.stringify(queue.queue[0])
           })
       }
       console.log("image:")
-      console.log(queue.queue[0])
+      console.log(queue.queue)
     }
     else if(req.body.action === ACTION_IMAGE_PROCESSING){
       // 画像処理が終了した時
       queue.queue.shift();
+      // デキューしたあとキューが残ってるかどうか
       if(queue.queue.length !== 0){
+        // 残ってたら先頭のキューをbusyにして画像処理サーバにPOSTする
         queue.queue[0].processing = PROCESSING_STATE_BUSY;
         request({
           ...options,
-          url:`http://${ORIGIN_HOST}/${ACTION_IMAGE_PROCESSING}`,
+          url:'http://localhost:8050/similarity',
           body:JSON.stringify(queue.queue[0])
         });
       }
