@@ -1,3 +1,14 @@
+all_pattern*
+utils/0
+utils/1
+utils/2
+utils/copy
+tmp/*
+tools/2016*
+tools/out.csv
+tools/out.txt
+tools/ranking.csv
+files
 seacret_key.py
 .idea
 .DS_Store
