@@ -1,8 +1,6 @@
 # coding=utf-8
 import cv2
-import numpy as np
 
-import itertools
 
 def declease_color(val):
     if val < 64:
@@ -15,8 +13,15 @@ def declease_color(val):
         return 224
 
 
-# 各画素値を減色する
 def posterize_image(src_img):
+    """
+    各画素値を減色する
+    Args:
+        src_img:
+
+    Returns:
+
+    """
     output_image = src_img.copy()
 
     height = src_img.shape[0]
@@ -35,17 +40,26 @@ def posterize_image(src_img):
     return output_image
 
 
-# ２枚の画像から色の類似度を返す
 def calculate_color_similarity(posterize_clothe_img, rank_img_path):
+    """
+    2枚の画像から類似度を計算する
+    Args:
+        posterize_clothe_img:
+        rank_img_path:
+
+    Returns:
+
+    """
     rank_img = cv2.imread("tmp/cropped/" + str(rank_img_path))
     if rank_img is None:
         return 0
     resize_retio = 4
     img1_height = rank_img.shape[0]
     img1_width = rank_img.shape[1]
-    resize_img1 = cv2.resize(rank_img, (round(img1_height/resize_retio), round(img1_width/resize_retio)))
+    resize_img1 = cv2.resize(rank_img, (round(img1_height / resize_retio), round(img1_width / resize_retio)))
 
-    posterize_clothe_img_resize = cv2.resize(posterize_clothe_img, (round(img1_height/resize_retio), round(img1_width/resize_retio)))
+    posterize_clothe_img_resize = cv2.resize(posterize_clothe_img,
+                                             (round(img1_height / resize_retio), round(img1_width / resize_retio)))
 
     posterize_rank_img = posterize_image(resize_img1)
 

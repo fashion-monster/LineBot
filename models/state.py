@@ -2,6 +2,10 @@
 
 
 class State:
+    """
+    Queue管理用stateのEntity
+    to_dictしてJSONにしてよしなに
+    """
     def __init__(self, user_id):
         pass
     # 抽象メソッド書きたかった.....
@@ -26,6 +30,14 @@ class ActionState(State):
 
     """
     def __init__(self, user_id, cloth_type, img_path, processing, action):
+        """これ使ってActionを送る
+        Args:
+            user_id:
+            cloth_type:
+            img_path:
+            processing:
+            action:
+        """
         State.__init__(self, user_id)
         param_list = [user_id, cloth_type, img_path, processing, action]
         ActionState.none_checker(param_list)
@@ -44,10 +56,16 @@ class ActionState(State):
 
 
 class ResultState(State):
-    """push_message用のstate
+    """これ使って結果を送る
 
     """
     def __init__(self, user_id, message, error_type):
+        """これ使って結果を送る
+        Args:
+            user_id: ユーザのID
+            message: 終わったかどうか
+            error_type: エラータイプ
+        """
         State.__init__(self, user_id)
         param_list = [user_id, message, error_type]
         ResultState.none_checker(param_list)
